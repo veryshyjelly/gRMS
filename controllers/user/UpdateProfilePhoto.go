@@ -1,1 +1,5 @@
 package user
+
+func UpdateProfilePhoto() {
+
+}
