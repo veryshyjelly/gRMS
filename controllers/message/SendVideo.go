@@ -6,15 +6,32 @@ import (
 )
 
 func SendVideo(db *gorm.DB, query *SendVideoQuery) (*modals.Message, error) {
-	return nil, nil
+	vid, err := modals.FindVideo(db, query.VideoID)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := modals.NewMessage(db, query.ChatID, query.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	msg.Video, msg.Caption = &vid.Video, &query.Caption
+	msg.ReplyToMessage, err = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	if query.Thumb != nil {
+		msg.Video.Thumb = query.Thumb
+	}
+
+	return msg, nil
 }
 
 type SendVideoQuery struct {
-	From *modals.User `json:"from"`
+	// UserID is the id of performer of the action
+	UserID uint64 `json:"from"`
 	// ChatID is the ID of the target chat
 	ChatID uint64 `json:"chat_id"`
 	// VideoID is the file ID of the photo to be sent
-	VideoID string `json:"video"`
+	VideoID uint64 `json:"video"`
 	// Caption is the video caption
 	Caption string `json:"caption"`
 	// Thumb is the thumbnail

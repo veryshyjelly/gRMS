@@ -1,6 +1,10 @@
 package modals
 
-import "time"
+import (
+	"fmt"
+	"gorm.io/gorm"
+	"time"
+)
 
 type Document struct {
 	// Unique ID of the Document
@@ -15,11 +19,35 @@ type Document struct {
 
 type DocumentDB struct {
 	Document
+	Filepath  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time
 }
 
-func NewDocument() *Document {
-	return &Document{}
+// NewDocument function to create a new document entry
+func NewDocument(db *gorm.DB, filepath, filename string, thumb *Photo) *Document {
+	doc := DocumentDB{
+		Document: Document{
+			Filename: filename,
+			Thumb:    thumb,
+		},
+		Filepath: filepath,
+	}
+
+	db.Create(&doc)
+
+	return &doc.Document
+}
+
+// FindDocument used to find document by id
+func FindDocument(db *gorm.DB, documentID uint64) (*DocumentDB, error) {
+	doc := DocumentDB{Document: Document{ID: documentID}}
+	db.First(&doc)
+
+	if doc.Filepath == "" {
+		return nil, fmt.Errorf("requested data not found")
+	}
+
+	return &doc, nil
 }

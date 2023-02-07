@@ -1,12 +1,16 @@
 package modals
 
-import "time"
+import (
+	"fmt"
+	"gorm.io/gorm"
+	"time"
+)
 
 type Message struct {
 	// ID unique to Chat
 	ID uint64 `json:"id" gorm:"primaryKey"`
 	// Date of Message sent
-	Date time.Time `json:"timestamp"`
+	CreatedAt time.Time `json:"timestamp"`
 	// From is the Message sender
 	From *User `json:"from"`
 	// Chat in which Message is send
@@ -18,7 +22,7 @@ type Message struct {
 	// ReplyToMessage is the Message to which this Message is replied
 	ReplyToMessage *Message `json:"reply_to_message,omitempty"`
 	// EditDate date of last edit
-	EditDate *time.Time `json:"edit_date,omitempty"`
+	UpdatedAt *time.Time `json:"edit_date,omitempty"`
 	// Text is the text message
 	Text *string `json:"text,omitempty"`
 	// Animation is the animated message (eg: gif)
@@ -55,6 +59,29 @@ type Message struct {
 	VideoChatEnded *bool `json:"video_chat_ended,omitempty"`
 }
 
-func NewMessage(chatID, userID int64) *Message {
-	return &Message{}
+// NewMessage creates a new message populated with Chat and User
+func NewMessage(db *gorm.DB, chatID, userID uint64) (*Message, error) {
+	chat, err := FindChat(db, chatID)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := FindUser(db, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Message{Chat: &chat.Chat, From: &user.User}, nil
+}
+
+// FindMessage used to find message in the chat table
+func FindMessage(db *gorm.DB, messageID, chatID uint64) (*Message, error) {
+	mess := Message{ID: messageID}
+	db.Table(fmt.Sprint(chatID)).First(&mess)
+
+	if mess.From == nil {
+		return nil, fmt.Errorf("message not found")
+	}
+
+	return &mess, nil
 }
