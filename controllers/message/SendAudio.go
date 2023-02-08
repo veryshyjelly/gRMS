@@ -6,20 +6,40 @@ import (
 )
 
 func SendAudio(db *gorm.DB, query *SendAudioQuery) (*modals.Message, error) {
-	return nil, nil
+	audio, err := modals.FindAudio(db, query.AudioID)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	if err != nil {
+		return nil, err
+	}
+
+	msg.Audio, msg.Caption = &audio.Audio, &query.Caption
+	msg.ReplyToMessage, err = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	if query.Thumb != 0 {
+		thumb, err := modals.FindPhoto(db, query.Thumb)
+		if err == nil {
+			msg.Audio.Thumb = &thumb.Photo
+		}
+	}
+
+	err = msg.Insert(db)
+	return msg, err
 }
 
 // SendAudioQuery is query format for sending audio
 type SendAudioQuery struct {
-	From *modals.User `json:"from"`
+	From uint64 `json:"from"`
 	// ChatID is the ID of the target chat
 	ChatID uint64 `json:"chat_id"`
 	// AudioID is the file ID of the photo to be sent
-	AudioID string `json:"audio"`
+	AudioID uint64 `json:"audio"`
 	// Caption is the audio caption
 	Caption string `json:"caption"`
 	// Thumb is the thumbnail
-	Thumb *modals.Photo `json:"thumb"`
+	Thumb uint64 `json:"thumb"`
 	// ReplyToMessageID is the id of replied message
 	ReplyToMessageID uint64 `json:"reply_to_message_id"`
 }

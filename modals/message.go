@@ -59,6 +59,10 @@ type Message struct {
 	VideoChatEnded *bool `json:"video_chat_ended,omitempty"`
 }
 
+func (m *Message) Insert(db *gorm.DB) error {
+	return db.Table(fmt.Sprint(m.Chat.ID)).Create(m).Error
+}
+
 // NewMessage creates a new message populated with Chat and User
 func NewMessage(db *gorm.DB, chatID, userID uint64) (*Message, error) {
 	chat, err := FindChat(db, chatID)
@@ -66,7 +70,7 @@ func NewMessage(db *gorm.DB, chatID, userID uint64) (*Message, error) {
 		return nil, err
 	}
 
-	user, err := FindUser(db, userID)
+	user, err := FindUser(db.Table(fmt.Sprint(chatID)), userID)
 	if err != nil {
 		return nil, err
 	}

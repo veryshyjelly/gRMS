@@ -16,7 +16,7 @@ type Chat struct {
 	// Usernames is the list of usernames in the chat
 	Usernames []string `json:"usernames"`
 	// DP is the display picture of the chat
-	DP Photo `json:"dp"`
+	DP *Photo `json:"dp"`
 	// Description is the chat description
 	Description string `json:"description"`
 	// InviteLink is the current active invite link
