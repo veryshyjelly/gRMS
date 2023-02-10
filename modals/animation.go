@@ -2,61 +2,77 @@ package modals
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"time"
 )
 
 type Animation struct {
 	// Unique ID of the Animation
 	ID uint64 `json:"file_id"`
-	// Width of the animation
+	// Width of the Animation
 	Width uint64 `json:"width"`
-	// Height of the animation
+	// Height of the Animation
 	Height uint64 `json:"height"`
-	// Thumb is the thumbnail of the animation
+	// Thumb is the thumbnail of the Animation
 	Thumb *Photo `json:"thumb"`
-	// Duration is the time duration of the animation
+	// Duration is the time duration of the Animation
 	Duration time.Duration `json:"duration"`
-	// Filename is the name of the file
-	Filename string `json:"filename"`
-	// Filesize is the size of the file in kb
-	Filesize uint64 `json:"filesize"`
 	// MimeType is the mime type of the file
 	MimeType string `json:"mime_type"`
+	// Metadata is the metadata of the file
+	Metadata *MediaMD
 }
 
-type AnimationDB struct {
-	Animation
-	// Filepath is the path or the direct link to the file
-	Filepath  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
+func NewAnimation() *Animation {
+	return &Animation{}
 }
 
-// NewAnimation to create a new animation entry
-func NewAnimation(db *gorm.DB, filepath, filename string, thumb *Photo) *Animation {
-	animation := AnimationDB{
-		Animation: Animation{
+// CreateAnimation to create a new Animation entry
+func (sr *DBService) CreateAnimation(filepath, filename string, thumb *Photo) *Animation {
+	animation := Animation{
+		Thumb: thumb,
+		Metadata: &MediaMD{
+			Filepath: filepath,
 			Filename: filename,
-			Thumb:    thumb,
 		},
-		Filepath: filepath,
 	}
 
-	db.Create(&animation)
+	sr.DB.Create(&animation)
 
-	return &animation.Animation
+	return &animation
 }
 
-// FindAnimation function used to search for animation by id
-func FindAnimation(db *gorm.DB, animationID uint64) (*AnimationDB, error) {
-	anim := AnimationDB{Animation: Animation{ID: animationID}}
-	db.First(&anim)
+// GetAnimation function used to search for Animation by id
+func (sr *DBService) GetAnimation(animationID uint64) (Media, error) {
+	anim := Animation{}
 
-	if anim.Filepath == "" {
-		return nil, fmt.Errorf("invalid animation id: %v", animationID)
+	sr.DB.First(&anim, "id = ?", animationID)
+	if anim.ID == 0 {
+		return nil, fmt.Errorf("invalid Animation id: %v", animationID)
 	}
 
 	return &anim, nil
+}
+
+func (an *Animation) GetType() Filetype {
+	return AnimationType
+}
+
+func (an *Animation) GetFileID() uint64 {
+	return an.ID
+}
+
+func (an *Animation) GetFilesize() uint64 {
+	return an.Metadata.Filesize
+}
+
+func (an *Animation) GetFilename() string {
+	return an.Metadata.Filename
+}
+
+func (an *Animation) GetFilepath() string {
+	return an.Metadata.Filepath
+}
+
+func (an *Animation) GetFileLinkExpiry() time.Time {
+	return time.Now().Add(time.Hour * 24 * 30)
 }

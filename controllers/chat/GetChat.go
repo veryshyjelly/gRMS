@@ -6,7 +6,7 @@ import (
 )
 
 func GetChat(db *gorm.DB, chatID uint64) (*modals.Chat, error) {
-	chat, err := modals.FindChat(db, chatID)
+	chat, err := modals.GetChat(db, chatID)
 	if err != nil {
 		return nil, err
 	}

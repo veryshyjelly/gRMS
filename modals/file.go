@@ -1,9 +1,5 @@
 package modals
 
-import (
-	"gorm.io/gorm"
-)
-
 type File struct {
 	ID       uint64 `json:"id"`
 	Filesize uint64 `json:"filesize"`
@@ -14,47 +10,55 @@ type File struct {
 type Filetype byte
 
 const (
-	PhotoType    Filetype = 1
-	AudioType             = 2
-	VideoType             = 3
-	DocumentType          = 4
-	StickerType           = 5
+	PhotoType     Filetype = 1
+	VideoType              = 2
+	AudioType              = 3
+	DocumentType           = 4
+	StickerType            = 5
+	AnimationType          = 6
 )
 
 // NewFile function should be used by the getFile method to get the downloadable file path
-func NewFile(db *gorm.DB, fileId uint64, filetype Filetype) (*File, error) {
+func (sr *DBService) NewFile(fileId uint64, filetype Filetype) (*File, error) {
 	file := File{ID: fileId, Filetype: filetype}
+
 	switch filetype {
 	case PhotoType:
-		ph, err := FindPhoto(db, fileId)
+		ph, err := sr.GetPhoto(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = ph.Filepath
+		file.Filepath = ph.GetFilepath()
 	case AudioType:
-		au, err := FindAudio(db, fileId)
+		au, err := sr.GetAudio(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = au.Filepath
+		file.Filepath = au.GetFilepath()
 	case VideoType:
-		vd, err := FindVideo(db, fileId)
+		vd, err := sr.GetVideo(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = vd.Filepath
+		file.Filepath = vd.GetFilepath()
 	case DocumentType:
-		doc, err := FindDocument(db, fileId)
+		doc, err := sr.GetDocument(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = doc.Filepath
+		file.Filepath = doc.GetFilepath()
 	case StickerType:
-		stk, err := FindSticker(db, fileId)
+		stk, err := sr.GetSticker(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = stk.Filepath
+		file.Filepath = stk.GetFilepath()
+	case AnimationType:
+		anim, err := sr.GetAnimation(fileId)
+		if err != nil {
+			return nil, err
+		}
+		file.Filepath = anim.GetFilepath()
 	}
 
 	return &file, nil

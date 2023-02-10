@@ -8,21 +8,21 @@ import (
 
 // SendAnimation creates a new message with animation ready to be sent to the chat
 func SendAnimation(db *gorm.DB, query *SendAnimationQuery) (*modals.Message, error) {
-	anim, err := modals.FindAnimation(db, query.AnimationID)
+	anim, err := modals.GetAnimation(db, query.AnimationID)
 	if err != nil {
 		return nil, err
 	}
 
-	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	msg, err := modals.CreateMessage(db, query.ChatID, query.From)
 	if err != nil {
 		return nil, fmt.Errorf("error creating message: %v", err)
 	}
 
-	msg.Animation, msg.Caption = &anim.Animation, &query.Caption
-	msg.ReplyToMessage, err = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	msg.Animation, msg.Caption = anim, &query.Caption
+	msg.ReplyToMessage, err = modals.GetMessage(db, query.ReplyToMessageID, query.ChatID)
 
 	if query.Thumb != 0 {
-		thumb, err := modals.FindPhoto(db, query.Thumb)
+		thumb, err := modals.GetPhoto(db, query.Thumb)
 		if err == nil {
 			msg.Animation.Thumb = &thumb.Photo
 		}

@@ -6,20 +6,20 @@ import (
 )
 
 func SendAudio(db *gorm.DB, query *SendAudioQuery) (*modals.Message, error) {
-	audio, err := modals.FindAudio(db, query.AudioID)
+	audio, err := modals.GetAudio(db, query.AudioID)
 	if err != nil {
 		return nil, err
 	}
 
-	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	msg, err := modals.CreateMessage(db, query.ChatID, query.From)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Audio, msg.Caption = &audio.Audio, &query.Caption
-	msg.ReplyToMessage, err = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	msg.ReplyToMessage, err = modals.GetMessage(db, query.ReplyToMessageID, query.ChatID)
 	if query.Thumb != 0 {
-		thumb, err := modals.FindPhoto(db, query.Thumb)
+		thumb, err := modals.GetPhoto(db, query.Thumb)
 		if err == nil {
 			msg.Audio.Thumb = &thumb.Photo
 		}

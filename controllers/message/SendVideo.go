@@ -7,18 +7,18 @@ import (
 
 // SendVideo creates a new message with video ready to be sent to the chat
 func SendVideo(db *gorm.DB, query *SendVideoQuery) (*modals.Message, error) {
-	vid, err := modals.FindVideo(db, query.VideoID)
+	vid, err := modals.GetVideo(db, query.VideoID)
 	if err != nil {
 		return nil, err
 	}
 
-	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	msg, err := modals.CreateMessage(db, query.ChatID, query.From)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Video, msg.Caption = &vid.Video, &query.Caption
-	msg.ReplyToMessage, err = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	msg.ReplyToMessage, err = modals.GetMessage(db, query.ReplyToMessageID, query.ChatID)
 	if query.Thumb != nil {
 		msg.Video.Thumb = query.Thumb
 	}

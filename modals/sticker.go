@@ -2,7 +2,6 @@ package modals
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -13,36 +12,56 @@ type Sticker struct {
 	Emoji string `json:"emoji"`
 	// Filesize is the size of the file in kb
 	Filesize uint64 `json:"filesize"`
+	// Metadata is the metadata of the file
+	Metadata *MediaMD
 }
 
-type StickerDB struct {
-	Sticker
-	Filepath  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
-}
-
-// NewSticker function to create a new sticker entry
-func NewSticker(db *gorm.DB, filepath, emoji string) *Sticker {
-	sticker := StickerDB{
-		Sticker:  Sticker{Emoji: emoji},
-		Filepath: filepath,
+// CreateSticker function to create a new sticker entry
+func (sr *DBService) CreateSticker(filepath, emoji string) *Sticker {
+	sticker := Sticker{
+		Emoji: emoji,
+		Metadata: &MediaMD{
+			Filepath: filepath,
+		},
 	}
 
-	db.Create(&sticker)
+	sr.DB.Create(&sticker)
 
-	return &sticker.Sticker
+	return &sticker
 }
 
-// FindSticker is used to find sticker by id
-func FindSticker(db *gorm.DB, stickerID uint64) (*StickerDB, error) {
-	sticker := StickerDB{Sticker: Sticker{ID: stickerID}}
-	db.First(&sticker)
+// GetSticker is used to find sticker by id
+func (sr *DBService) GetSticker(stickerID uint64) (Media, error) {
+	sticker := Sticker{}
 
-	if sticker.Filepath == "" {
-		return nil, fmt.Errorf("sticker with id %v not found ", stickerID)
+	sr.DB.First(&sticker, "id = ?", stickerID)
+	if sticker.ID == 0 {
+		return nil, fmt.Errorf("sticker not found")
 	}
 
 	return &sticker, nil
+}
+
+func (st Sticker) GetType() Filetype {
+	return StickerType
+}
+
+func (st Sticker) GetFileID() uint64 {
+	return st.ID
+}
+
+func (st Sticker) GetFilesize() uint64 {
+	return st.Filesize
+}
+
+func (st Sticker) GetFilename() string {
+	return st.Metadata.Filename
+}
+
+func (st Sticker) GetFilepath() string {
+	return st.Metadata.Filepath
+}
+
+func (st Sticker) GetFileLinkExpiry() time.Time {
+	return time.Now().Add(time.Hour * 24 * 30)
 }

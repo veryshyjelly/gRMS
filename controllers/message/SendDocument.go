@@ -7,20 +7,20 @@ import (
 
 // SendDocument creates a new message with document ready to be sent to the chat
 func SendDocument(db *gorm.DB, query *SendDocumentQuery) (*modals.Message, error) {
-	doc, err := modals.FindDocument(db, query.DocumentID)
+	doc, err := modals.GetDocument(db, query.DocumentID)
 	if err != nil {
 		return nil, err
 	}
 
-	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	msg, err := modals.CreateMessage(db, query.ChatID, query.From)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Document, msg.Caption = &doc.Document, &query.Caption
-	msg.ReplyToMessage, err = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	msg.ReplyToMessage, err = modals.GetMessage(db, query.ReplyToMessageID, query.ChatID)
 	if query.Thumb != 0 {
-		thumb, err := modals.FindPhoto(db, query.Thumb)
+		thumb, err := modals.GetPhoto(db, query.Thumb)
 		if err == nil {
 			msg.Document.Thumb = &thumb.Photo
 		}

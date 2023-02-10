@@ -2,52 +2,65 @@ package modals
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"time"
 )
 
 type Document struct {
 	// Unique ID of the Document
 	ID uint64 `json:"id" gorm:"primaryKey"`
-	// Filename is the name of the file
-	Filename string `json:"filename"`
-	// Filesize is the size of the file in kb
-	Filesize uint64 `json:"filesize"`
 	// Thumb is the thumbnail for the Document
 	Thumb *Photo `json:"thumb"`
+	// Metadata is the metadata of the file
+	Metadata *MediaMD
 }
 
-type DocumentDB struct {
-	Document
-	Filepath  string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time
-}
-
-// NewDocument function to create a new document entry
-func NewDocument(db *gorm.DB, filepath, filename string, thumb *Photo) *Document {
-	doc := DocumentDB{
-		Document: Document{
+// CreateDocument function to create a new document entry
+func (sr *DBService) CreateDocument(filepath, filename string, thumb *Photo) *Document {
+	doc := Document{
+		Thumb: thumb,
+		Metadata: &MediaMD{
 			Filename: filename,
-			Thumb:    thumb,
+			Filepath: filepath,
 		},
-		Filepath: filepath,
 	}
 
-	db.Create(&doc)
+	sr.DB.Create(&doc)
 
-	return &doc.Document
+	return &doc
 }
 
-// FindDocument used to find document by id
-func FindDocument(db *gorm.DB, documentID uint64) (*DocumentDB, error) {
-	doc := DocumentDB{Document: Document{ID: documentID}}
-	db.First(&doc)
+// GetDocument used to find document by id
+func (sr *DBService) GetDocument(documentID uint64) (Media, error) {
+	doc := Document{}
 
-	if doc.Filepath == "" {
-		return nil, fmt.Errorf("requested data not found")
+	sr.DB.First(&doc, "id = ?", documentID)
+	if doc.ID == 0 {
+		return nil, fmt.Errorf("document not found")
 	}
 
 	return &doc, nil
+}
+
+func (doc Document) GetType() Filetype {
+	return DocumentType
+}
+
+func (doc Document) GetFileID() uint64 {
+	return doc.ID
+}
+
+func (doc Document) GetFilesize() uint64 {
+	return doc.Metadata.Filesize
+}
+
+func (doc Document) GetFilename() string {
+	return doc.Metadata.Filename
+}
+
+func (doc Document) GetFilepath() string {
+	return doc.Metadata.Filepath
+}
+
+func (doc Document) GetFileLinkExpiry() time.Time {
+	return time.Now().Add(time.Hour * 24 * 30)
 }

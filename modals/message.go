@@ -26,7 +26,7 @@ type Message struct {
 	// Text is the text message
 	Text *string `json:"text,omitempty"`
 	// Animation is the animated message (eg: gif)
-	Animation *Animation `json:"animation,omitempty"`
+	Animation *Animation `json:"Animation,omitempty"`
 	// Audio is the audio message (eg: mp3)
 	Audio *Audio `json:"audio,omitempty"`
 	// Document is the document message (eg: pdf)
@@ -63,28 +63,28 @@ func (m *Message) Insert(db *gorm.DB) error {
 	return db.Table(fmt.Sprint(m.Chat.ID)).Create(m).Error
 }
 
-// NewMessage creates a new message populated with Chat and User
-func NewMessage(db *gorm.DB, chatID, userID uint64) (*Message, error) {
-	chat, err := FindChat(db, chatID)
+// CreateMessage creates a new message populated with Chat and User
+func (sr *DBService) CreateMessage(chatID, userID uint64) (*Message, error) {
+	chat, err := sr.GetChat(chatID)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := FindUser(db.Table(fmt.Sprint(chatID)), userID)
+	user, err := sr.GetUser(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Message{Chat: &chat.Chat, From: &user.User}, nil
+	return &Message{Chat: &chat.Chat, From: user}, nil
 }
 
-// FindMessage used to find message in the chat table
-func FindMessage(db *gorm.DB, messageID, chatID uint64) (*Message, error) {
-	mess := Message{ID: messageID}
-	db.Table(fmt.Sprint(chatID)).First(&mess)
+// GetMessage used to find message in the chat table
+func (sr *DBService) GetMessage(messageID, chatID uint64) (*Message, error) {
+	mess := Message{}
 
-	if mess.From == nil {
-		return nil, fmt.Errorf("message not found")
+	sr.DB.Table(fmt.Sprint(chatID)).First(&mess, "id = ?", messageID)
+	if mess.ID == 0 {
+		return nil, fmt.Errorf("invalid message id %v or chat id %v", messageID, chatID)
 	}
 
 	return &mess, nil

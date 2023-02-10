@@ -2,7 +2,6 @@ package modals
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -19,7 +18,7 @@ type User struct {
 	Bio string `json:"bio"`
 }
 
-type UserDB struct {
+type userDB struct {
 	User
 	Email     string `json:"email" validate:"email"`
 	Password  string `json:"password" validate:"min:6"`
@@ -28,9 +27,20 @@ type UserDB struct {
 	DeletedAt time.Time `gorm:"index"`
 }
 
-// NewUser function to create a new user entry
-func NewUser(db *gorm.DB, firstName, lastName, username, email, password string) *User {
-	user := UserDB{
+func NewUser() *User {
+	return &User{}
+}
+
+// CreateUser function to create a new user entry
+func (sr *DBService) CreateUser(firstName, lastName, username, email, password string) (*User, error) {
+	user := userDB{}
+
+	sr.DB.First(&user, "email = ?", email)
+	if user.Email != "" {
+		return nil, fmt.Errorf("email already exists")
+	}
+
+	user = userDB{
 		User: User{
 			FirstName: firstName,
 			LastName:  lastName,
@@ -40,19 +50,27 @@ func NewUser(db *gorm.DB, firstName, lastName, username, email, password string)
 		Password: password,
 	}
 
-	db.Create(&user)
+	sr.DB.Create(&user)
 
-	return &user.User
+	return &user.User, nil
 }
 
-// FindUser is used to find user by id
-func FindUser(db *gorm.DB, userID uint64) (*UserDB, error) {
-	user := UserDB{User: User{ID: userID}}
-	db.First(&user)
+// GetUser is used to find user by id
+func (sr *DBService) GetUser(userID uint64) (*User, error) {
+	user := userDB{}
 
-	if user.Email == "" {
+	sr.DB.First(&user, "id = ?", userID)
+	if user.ID == 0 {
 		return nil, fmt.Errorf("invalid user id: %v", userID)
 	}
 
-	return &user, nil
+	return &user.User, nil
+}
+
+func (sr *DBService) UpdateUser(user *User) error {
+	return nil
+}
+
+func (sr *DBService) DeleteUser(userID uint64) error {
+	return nil
 }

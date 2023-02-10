@@ -2,7 +2,6 @@ package modals
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -21,42 +20,45 @@ type Chat struct {
 	Description string `json:"description"`
 	// InviteLink is the current active invite link
 	InviteLink string `json:"invite_link"`
+	// MetaData is the chat metadata
+	MetaData *ChatMD
 }
 
-type ChatDB struct {
-	Chat
+type ChatMD struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time `gorm:"index"`
 }
 
-// NewChat creates a new chat and registers in the database
-func NewChat(db *gorm.DB, users []User, title string) *Chat {
-	chat := ChatDB{
-		Chat: Chat{
-			Title:     title,
-			Users:     append(make([]User, 0), users...),
-			Usernames: []string{},
-		},
+// CreateChat creates a new chat and registers in the database
+func (sr *DBService) CreateChat(users []User, title string) *Chat {
+	chat := Chat{
+		Title:     title,
+		Users:     append(make([]User, 0), users...),
+		Usernames: []string{},
 	}
 
 	for _, v := range users {
 		chat.Usernames = append(chat.Usernames, v.Username)
 	}
 
-	db.Create(&chat)
+	sr.DB.Create(&chat)
 
-	return &chat.Chat
+	return &chat
 }
 
-// FindChat used to find chat using chatID
-func FindChat(db *gorm.DB, chatID uint64) (*ChatDB, error) {
-	chat := ChatDB{Chat: Chat{ID: chatID}}
-	db.First(&chat)
+// GetChat used to find chat using chatID
+func (sr *DBService) GetChat(chatID uint64) (*Chat, error) {
+	chat := Chat{}
 
-	if len(chat.Users) < 2 {
-		return nil, fmt.Errorf("invalid chat id: %v", chatID)
+	sr.DB.First(&chat, "id = ?", chatID)
+	if chat.ID == 0 {
+		return nil, fmt.Errorf("invalid chat id %v", chatID)
 	}
 
 	return &chat, nil
+}
+
+func (sr *DBService) UpdateChat(chat *Chat) error {
+	return nil
 }

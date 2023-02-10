@@ -7,12 +7,12 @@ import (
 
 // ForwardMessage forwards a message to a chat from another chat
 func ForwardMessage(db *gorm.DB, query *ForwardMessageQuery) (*modals.Message, error) {
-	fr, err := modals.FindMessage(db, query.MessageID, query.FromChatID)
+	fr, err := modals.GetMessage(db, query.MessageID, query.FromChatID)
 	if err != nil {
 		return nil, err
 	}
 
-	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	msg, err := modals.CreateMessage(db, query.ChatID, query.From)
 	if err != nil {
 		return nil, err
 	}

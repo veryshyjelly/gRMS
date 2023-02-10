@@ -7,13 +7,13 @@ import (
 
 // SendMessage creates a new message with text ready to be sent to the chat
 func SendMessage(db *gorm.DB, query *SendMessageQuery) (*modals.Message, error) {
-	msg, err := modals.NewMessage(db, query.ChatID, query.From)
+	msg, err := modals.CreateMessage(db, query.ChatID, query.From)
 	if err != nil {
 		return nil, err
 	}
 
 	msg.Text = &query.Text
-	msg.ReplyToMessage, _ = modals.FindMessage(db, query.ReplyToMessageID, query.ChatID)
+	msg.ReplyToMessage, _ = modals.GetMessage(db, query.ReplyToMessageID, query.ChatID)
 
 	err = msg.Insert(db)
 	return msg, err

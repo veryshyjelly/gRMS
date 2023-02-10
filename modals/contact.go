@@ -12,11 +12,7 @@ type Contact struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	// ID uniquely identifies this contact
-	ID uint64 `json:"id" gorm:"primaryKey"`
-}
-
-type ContactDB struct {
-	Contact
+	ID        uint64 `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time
@@ -24,26 +20,25 @@ type ContactDB struct {
 
 // NewContact function to create new contact entry
 func NewContact(db *gorm.DB, phoneNumber, firstName, lastName string) *Contact {
-	contact := ContactDB{
-		Contact: Contact{
-			PhoneNumber: phoneNumber,
-			FirstName:   firstName,
-			LastName:    lastName,
-		},
+	contact := Contact{
+		PhoneNumber: phoneNumber,
+		FirstName:   firstName,
+		LastName:    lastName,
 	}
 
 	db.Create(&contact)
 
-	return &contact.Contact
+	return &contact
 }
 
 // FindContact used to find contact by id
-func FindContact(db *gorm.DB, contactID uint64) (*ContactDB, error) {
-	contact := ContactDB{Contact: Contact{ID: contactID}}
-	db.First(contact)
+func FindContact(db *gorm.DB, contactID uint64) (*Contact, error) {
+	contact := Contact{}
 
-	if contact.PhoneNumber == "" {
-		return nil, fmt.Errorf("invalid contact id: %v", contact)
+	db.First(contact, "id = ?", contactID)
+
+	if contact.ID == 0 {
+		return nil, fmt.Errorf("invalid contact id: %v", contactID)
 	}
 
 	return &contact, nil
