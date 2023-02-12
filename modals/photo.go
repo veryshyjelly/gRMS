@@ -1,7 +1,6 @@
 package modals
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -11,34 +10,7 @@ type Photo struct {
 	// Thumb is the thumbnail for the Document
 	Thumb *Photo `json:"thumb"`
 	// Metadata is the metadata of the file
-	Metadata *MediaMD
-}
-
-// CreatePhoto function to create new photo entry
-func (sr *DBService) CreatePhoto(filepath, filename string, thumb *Photo) *Photo {
-	photo := Photo{
-		Thumb: thumb,
-		Metadata: &MediaMD{
-			Filename: filename,
-			Filepath: filepath,
-		},
-	}
-
-	sr.DB.Create(&photo)
-
-	return &photo
-}
-
-// GetPhoto used to find photo by id
-func (sr *DBService) GetPhoto(photoID uint64) (Media, error) {
-	photo := Photo{}
-
-	sr.DB.First(&photo, "id = ?", photoID)
-	if photo.ID == 0 {
-		return nil, fmt.Errorf("invalid photo id: %v", photoID)
-	}
-
-	return &photo, nil
+	Metadata *db.MediaMD
 }
 
 func (ph Photo) GetType() Filetype {

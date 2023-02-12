@@ -19,7 +19,7 @@ const (
 )
 
 // NewFile function should be used by the getFile method to get the downloadable file path
-func (sr *DBService) NewFile(fileId uint64, filetype Filetype) (*File, error) {
+func (sr *dbservice.DBService) NewFile(fileId uint64, filetype Filetype) (*File, error) {
 	file := File{ID: fileId, Filetype: filetype}
 
 	switch filetype {

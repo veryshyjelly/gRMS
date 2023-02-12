@@ -1,7 +1,6 @@
 package modals
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -11,34 +10,7 @@ type Document struct {
 	// Thumb is the thumbnail for the Document
 	Thumb *Photo `json:"thumb"`
 	// Metadata is the metadata of the file
-	Metadata *MediaMD
-}
-
-// CreateDocument function to create a new document entry
-func (sr *DBService) CreateDocument(filepath, filename string, thumb *Photo) *Document {
-	doc := Document{
-		Thumb: thumb,
-		Metadata: &MediaMD{
-			Filename: filename,
-			Filepath: filepath,
-		},
-	}
-
-	sr.DB.Create(&doc)
-
-	return &doc
-}
-
-// GetDocument used to find document by id
-func (sr *DBService) GetDocument(documentID uint64) (Media, error) {
-	doc := Document{}
-
-	sr.DB.First(&doc, "id = ?", documentID)
-	if doc.ID == 0 {
-		return nil, fmt.Errorf("document not found")
-	}
-
-	return &doc, nil
+	Metadata *db.MediaMD
 }
 
 func (doc Document) GetType() Filetype {

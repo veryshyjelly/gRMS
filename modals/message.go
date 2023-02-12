@@ -1,8 +1,6 @@
 package modals
 
 import (
-	"fmt"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -39,8 +37,6 @@ type Message struct {
 	Video *Video `json:"video,omitempty"`
 	// Caption is the caption in a media message
 	Caption *string `json:"caption,omitempty"`
-	// Contact is the contact message
-	Contact *Contact `json:"contact,omitempty"`
 	// NewChatMembers list of new users joined in the chat
 	NewChatMembers []User `json:"new_chat_members,omitempty"`
 	// LeftChatMember member who left the chat
@@ -59,33 +55,6 @@ type Message struct {
 	VideoChatEnded *bool `json:"video_chat_ended,omitempty"`
 }
 
-func (m *Message) Insert(db *gorm.DB) error {
-	return db.Table(fmt.Sprint(m.Chat.ID)).Create(m).Error
-}
-
-// CreateMessage creates a new message populated with Chat and User
-func (sr *DBService) CreateMessage(chatID, userID uint64) (*Message, error) {
-	chat, err := sr.GetChat(chatID)
-	if err != nil {
-		return nil, err
-	}
-
-	user, err := sr.GetUser(userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Message{Chat: &chat.Chat, From: user}, nil
-}
-
-// GetMessage used to find message in the chat table
-func (sr *DBService) GetMessage(messageID, chatID uint64) (*Message, error) {
-	mess := Message{}
-
-	sr.DB.Table(fmt.Sprint(chatID)).First(&mess, "id = ?", messageID)
-	if mess.ID == 0 {
-		return nil, fmt.Errorf("invalid message id %v or chat id %v", messageID, chatID)
-	}
-
-	return &mess, nil
+func (m *Message) GetID() uint64 {
+	return m.ID
 }

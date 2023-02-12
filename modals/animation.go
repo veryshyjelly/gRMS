@@ -1,7 +1,6 @@
 package modals
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -19,38 +18,11 @@ type Animation struct {
 	// MimeType is the mime type of the file
 	MimeType string `json:"mime_type"`
 	// Metadata is the metadata of the file
-	Metadata *MediaMD
+	Metadata *db.MediaMD
 }
 
 func NewAnimation() *Animation {
 	return &Animation{}
-}
-
-// CreateAnimation to create a new Animation entry
-func (sr *DBService) CreateAnimation(filepath, filename string, thumb *Photo) *Animation {
-	animation := Animation{
-		Thumb: thumb,
-		Metadata: &MediaMD{
-			Filepath: filepath,
-			Filename: filename,
-		},
-	}
-
-	sr.DB.Create(&animation)
-
-	return &animation
-}
-
-// GetAnimation function used to search for Animation by id
-func (sr *DBService) GetAnimation(animationID uint64) (Media, error) {
-	anim := Animation{}
-
-	sr.DB.First(&anim, "id = ?", animationID)
-	if anim.ID == 0 {
-		return nil, fmt.Errorf("invalid Animation id: %v", animationID)
-	}
-
-	return &anim, nil
 }
 
 func (an *Animation) GetType() Filetype {

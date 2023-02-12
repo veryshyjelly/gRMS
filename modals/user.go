@@ -1,7 +1,6 @@
 package modals
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -16,10 +15,11 @@ type User struct {
 	Username string `json:"username"`
 	// Bio of the user
 	Bio string `json:"bio"`
+	// Metadata is the user meta data
+	Metadata UserMD
 }
 
-type userDB struct {
-	User
+type UserMD struct {
 	Email     string `json:"email" validate:"email"`
 	Password  string `json:"password" validate:"min:6"`
 	CreatedAt time.Time
@@ -31,46 +31,22 @@ func NewUser() *User {
 	return &User{}
 }
 
-// CreateUser function to create a new user entry
-func (sr *DBService) CreateUser(firstName, lastName, username, email, password string) (*User, error) {
-	user := userDB{}
-
-	sr.DB.First(&user, "email = ?", email)
-	if user.Email != "" {
-		return nil, fmt.Errorf("email already exists")
-	}
-
-	user = userDB{
-		User: User{
-			FirstName: firstName,
-			LastName:  lastName,
-			Username:  username,
-		},
-		Email:    email,
-		Password: password,
-	}
-
-	sr.DB.Create(&user)
-
-	return &user.User, nil
+func (u *User) GetUserID() uint64 {
+	return u.ID
 }
 
-// GetUser is used to find user by id
-func (sr *DBService) GetUser(userID uint64) (*User, error) {
-	user := userDB{}
-
-	sr.DB.First(&user, "id = ?", userID)
-	if user.ID == 0 {
-		return nil, fmt.Errorf("invalid user id: %v", userID)
-	}
-
-	return &user.User, nil
+func (u *User) GetName() string {
+	return u.FirstName + u.LastName
 }
 
-func (sr *DBService) UpdateUser(user *User) error {
-	return nil
+func (u *User) GetUserName() string {
+	return u.Username
 }
 
-func (sr *DBService) DeleteUser(userID uint64) error {
-	return nil
+func (u *User) GetEmail() string {
+	return u.Metadata.Email
+}
+
+func (u *User) GetPassword() string {
+	return u.Metadata.Password
 }

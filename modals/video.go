@@ -1,7 +1,6 @@
 package modals
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -15,34 +14,7 @@ type Video struct {
 	// MimeType is the mime type of the file
 	MimeType string `json:"mime_type"`
 	// Metadata is the metadata of the file
-	Metadata *MediaMD
-}
-
-// CreateVideo function to create a new video entry in the database
-func (sr *DBService) CreateVideo(filepath, filename string, thumb *Photo) *Video {
-	video := Video{
-		Thumb: thumb,
-		Metadata: &MediaMD{
-			Filename: filename,
-			Filepath: filepath,
-		},
-	}
-
-	sr.DB.Create(&video)
-
-	return &video
-}
-
-// GetVideo function used to search by video by id
-func (sr *DBService) GetVideo(fileID uint64) (Media, error) {
-	vid := Video{}
-
-	sr.DB.First(&vid, "id = ?", fileID)
-	if vid.ID == 0 {
-		return nil, fmt.Errorf("video not found")
-	}
-
-	return &vid, nil
+	Metadata *db.MediaMD
 }
 
 func (vi *Video) GetType() Filetype {
