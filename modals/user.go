@@ -20,8 +20,9 @@ type User struct {
 }
 
 type UserMD struct {
-	Email     string `json:"email" validate:"email"`
-	Password  string `json:"password" validate:"min:6"`
+	Chats     map[uint64]bool `json:"chats"`
+	Email     string          `json:"email" validate:"email"`
+	Password  string          `json:"password" validate:"min:6"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt time.Time `gorm:"index"`
@@ -49,4 +50,8 @@ func (u *User) GetEmail() string {
 
 func (u *User) GetPassword() string {
 	return u.Metadata.Password
+}
+
+func (u *User) GetChats() map[uint64]bool {
+	return u.Metadata.Chats
 }

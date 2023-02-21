@@ -1,6 +1,7 @@
 package modals
 
 import (
+	dbService "chat-app/services/db"
 	"time"
 )
 
@@ -18,7 +19,7 @@ type Animation struct {
 	// MimeType is the mime type of the file
 	MimeType string `json:"mime_type"`
 	// Metadata is the metadata of the file
-	Metadata *db.MediaMD
+	Metadata *dbService.MediaMD
 }
 
 func NewAnimation() *Animation {

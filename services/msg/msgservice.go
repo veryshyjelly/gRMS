@@ -16,9 +16,9 @@ type MsgS interface {
 }
 
 type MsgService struct {
-	dbs dbService.DBService
+	dbs dbService.DBS
 }
 
-func NewMsgService(db dbService.DBService) *MsgService {
+func NewMsgService(db dbService.DBS) *MsgService {
 	return &MsgService{dbs: db}
 }

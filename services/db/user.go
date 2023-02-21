@@ -40,10 +40,24 @@ func (sr *DBService) GetUser(userID uint64) (*modals.User, error) {
 
 	return &user, nil
 }
+
+func (sr *DBService) FindUser(username, password string) (*modals.User, error) {
+	user := modals.User{}
+
+	sr.db.First(&user, "username = ? AND password = ?", username, password)
+	if user.ID == 0 {
+		return nil, fmt.Errorf("invalid username or password")
+	}
+
+	return &user, nil
+}
+
 func (sr *DBService) UpdateUser(user *modals.User) error {
+	// TODO implement this function
 	return nil
 }
 
 func (sr *DBService) DeleteUser(userID uint64) error {
+	// TODO implement this function
 	return nil
 }

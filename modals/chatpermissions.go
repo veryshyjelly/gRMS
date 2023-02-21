@@ -1,4 +1,4 @@
-package chatmodals
+package modals
 
 type ChatPermissions struct {
 	CanSendMessages  *bool `json:"can_send_messages,omitempty"`

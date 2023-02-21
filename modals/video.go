@@ -1,6 +1,7 @@
 package modals
 
 import (
+	dbservice "chat-app/services/db"
 	"time"
 )
 
@@ -14,7 +15,7 @@ type Video struct {
 	// MimeType is the mime type of the file
 	MimeType string `json:"mime_type"`
 	// Metadata is the metadata of the file
-	Metadata *db.MediaMD
+	Metadata *dbservice.MediaMD
 }
 
 func (vi *Video) GetType() Filetype {

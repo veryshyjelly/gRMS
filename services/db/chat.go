@@ -34,6 +34,30 @@ func (sr *DBService) GetChat(chatID uint64) (*modals.Chat, error) {
 	return &chat, nil
 }
 
+// UpdateChat updates the chat
 func (sr *DBService) UpdateChat(chat *modals.Chat) error {
+	// TODO: check if chat exists
 	return nil
+}
+
+// SetChatPhoto sets the chat photo
+func (sr *DBService) SetChatPhoto(chatID uint64, photo *modals.Photo) (*modals.Chat, error) {
+	chat, err := sr.GetChat(chatID)
+	if err != nil {
+		return nil, fmt.Errorf("cannot find chat: %v", err)
+	}
+
+	chat.DP = photo
+	return chat, sr.db.Save(&chat).Error
+}
+
+// DeleteChatPhoto deletes the chat photo
+func (sr *DBService) DeleteChatPhoto(chatID uint64) (*modals.Chat, error) {
+	chat, err := sr.GetChat(chatID)
+	if err != nil {
+		return nil, fmt.Errorf("cannot find chat: %v", err)
+	}
+
+	chat.DP = nil
+	return chat, sr.db.Save(&chat).Error
 }

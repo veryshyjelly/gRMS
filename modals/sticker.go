@@ -1,6 +1,7 @@
 package modals
 
 import (
+	dbService "chat-app/services/db"
 	"time"
 )
 
@@ -12,7 +13,7 @@ type Sticker struct {
 	// Filesize is the size of the file in kb
 	Filesize uint64 `json:"filesize"`
 	// Metadata is the metadata of the file
-	Metadata *db.MediaMD
+	Metadata *dbService.MediaMD
 }
 
 func (st Sticker) GetType() Filetype {
