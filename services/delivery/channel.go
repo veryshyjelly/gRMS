@@ -2,14 +2,20 @@ package delivery
 
 import (
 	"chat-app/modals"
+	"fmt"
 )
 
 type Channel struct {
+	// ChatID is the id of the chat
 	ChatID uint64
-	Users  map[*Client]bool
-	Mess   chan *modals.Message
-	Join   chan *Client
-	Leave  chan *Client
+	// Users is the map of all the users in the channel
+	Users map[*Client]bool
+	// Mess is the channel to send messages to all the users
+	Mess chan *modals.Message
+	// Join is the chan to add a new user to the channel
+	Join chan *Client
+	// Leave is the chan to remove a user from the channel
+	Leave chan *Client
 }
 
 func NewChannel(chatID uint64) *Channel {
@@ -28,8 +34,10 @@ func (c *Channel) Run() {
 	for len(c.Users) > 0 {
 		select {
 		case client := <-c.Join:
+			fmt.Printf("new user %v joined in %v", client.User.Username, c.ChatID)
 			c.Users[client] = true
 		case client := <-c.Leave:
+			fmt.Println("user left", client.User.Username)
 			delete(c.Users, client)
 		case msg := <-c.Mess:
 			for client := range c.Users {

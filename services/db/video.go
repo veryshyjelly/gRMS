@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -6,13 +6,11 @@ import (
 )
 
 // CreateVideo function to create a new video entry in the database
-func (sr *DBService) CreateVideo(filepath, filename string, thumb *modals.Photo) Media {
+func (sr *DBService) CreateVideo(filepath, filename string, thumb uint64) Media {
 	video := modals.Video{
-		Thumb: thumb,
-		Metadata: &modals.MediaMD{
-			Filename: filename,
-			Filepath: filepath,
-		},
+		Thumb:    thumb,
+		Filename: filename,
+		Filepath: filepath,
 	}
 
 	sr.db.Create(&video)

@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -9,9 +9,7 @@ import (
 type Media interface {
 	GetType() modals.Filetype
 	GetFileID() uint64
-	GetFilesize() uint64
-	GetFilename() string
-	GetFilepath() string
+	GetMetaData() *modals.MediaMD
 	GetFileLinkExpiry() time.Time
 }
 
@@ -19,17 +17,17 @@ type Media interface {
 func (sr *DBService) CreateMedia(filepath, filename string, filetype modals.Filetype) (Media, error) {
 	switch filetype {
 	case modals.PhotoType:
-		return sr.CreatePhoto(filepath, filename, nil), nil
+		return sr.CreatePhoto(filepath, filename, 0), nil
 	case modals.StickerType:
 		return sr.CreateSticker(filepath, filename), nil
 	case modals.VideoType:
-		return sr.CreateVideo(filepath, filename, nil), nil
+		return sr.CreateVideo(filepath, filename, 0), nil
 	case modals.AudioType:
-		return sr.CreateAudio(filepath, filename, nil), nil
+		return sr.CreateAudio(filepath, filename, 0), nil
 	case modals.DocumentType:
-		return sr.CreateDocument(filepath, filename, nil), nil
+		return sr.CreateDocument(filepath, filename, 0), nil
 	case modals.AnimationType:
-		return sr.CreateAnimation(filepath, filename, nil), nil
+		return sr.CreateAnimation(filepath, filename, 0), nil
 	default:
 		return nil, nil
 	}

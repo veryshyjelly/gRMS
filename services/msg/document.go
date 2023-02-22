@@ -16,13 +16,10 @@ func (ms *MsgService) Document(query *DocumentQuery) (*modals.Message, error) {
 		return nil, err
 	}
 
-	msg.Document, msg.Caption = doc.(*modals.Document), &query.Caption
-	msg.ReplyToMessage, err = ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
-	if query.Thumb != 0 {
-		thumb, err := ms.dbs.GetPhoto(query.Thumb)
-		if err == nil {
-			msg.Document.Thumb = thumb.(*modals.Photo)
-		}
+	msg.Document, msg.Caption = doc.(*modals.Document).ID, &query.Caption
+	if query.ReplyToMessageID != 0 {
+		rep, _ := ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+		msg.ReplyToMessage = rep.ID
 	}
 
 	err = ms.dbs.InsertMessage(msg)

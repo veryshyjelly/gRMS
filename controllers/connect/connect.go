@@ -5,25 +5,27 @@ import (
 	"chat-app/services/delivery"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
+	"log"
 )
 
-func ConnClient(c *fiber.Ctx) error {
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+func ConnClient() fiber.Handler {
+	return websocket.New(func(c *websocket.Conn) {
+		username := c.Query("username")
+		password := c.Query("password")
 
-	user, err := dbservice.DBSr.FindUser(username, password)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": err.Error(),
-		})
-	}
+		user, err := dbservice.DBSr.FindUser(username)
+		if err != nil || user.Password != password {
+			err := c.WriteJSON(fiber.Map{"message": "Invalid username or password"})
+			c.Close()
+			if err != nil {
+				log.Println("error sending error:", err)
+			}
+			return
+		}
 
-	websocket.New(func(c *websocket.Conn) {
 		client := delivery.NewClient(user, c)
 		go client.SyncHistory()
 		go client.Listen()
 		client.Read()
 	})
-
-	return nil
 }

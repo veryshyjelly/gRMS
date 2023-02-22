@@ -8,7 +8,7 @@ import (
 )
 
 func Connect() {
-	dbservice.DBSr = dbservice.NewDBService(database.ChatDb)
-	msgService.MGSr = msgService.NewMsgService(dbservice.DBSr)
+	dbService.DBSr = dbService.NewDBService(database.ChatDb)
+	msgService.MGSr = msgService.NewMsgService(dbService.DBSr)
 	delivery.DVSr = delivery.NewDvService(msgService.MGSr)
 }

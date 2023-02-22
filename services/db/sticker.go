@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -8,10 +8,8 @@ import (
 // CreateSticker function to create a new sticker entry
 func (sr *DBService) CreateSticker(filepath, emoji string) Media {
 	sticker := modals.Sticker{
-		Emoji: emoji,
-		Metadata: &modals.MediaMD{
-			Filepath: filepath,
-		},
+		Emoji:    emoji,
+		Filepath: filepath,
 	}
 
 	sr.db.Create(&sticker)

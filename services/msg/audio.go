@@ -16,13 +16,10 @@ func (ms *MsgService) Audio(query *AudioQuery) (*modals.Message, error) {
 		return nil, err
 	}
 
-	msg.Audio, msg.Caption = audio.(*modals.Audio), &query.Caption
-	msg.ReplyToMessage, err = ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
-	if query.Thumb != 0 {
-		thumb, err := ms.dbs.GetPhoto(query.Thumb)
-		if err == nil {
-			msg.Audio.Thumb = thumb.(*modals.Photo)
-		}
+	msg.Audio, msg.Caption = audio.(*modals.Audio).ID, &query.Caption
+	if query.ReplyToMessageID != 0 {
+		rep, _ := ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+		msg.ReplyToMessage = rep.ID
 	}
 
 	err = ms.dbs.InsertMessage(msg)

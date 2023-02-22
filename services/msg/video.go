@@ -16,10 +16,10 @@ func (ms *MsgService) Video(query *VideoQuery) (*modals.Message, error) {
 		return nil, err
 	}
 
-	msg.Video, msg.Caption = vid.(*modals.Video), &query.Caption
-	msg.ReplyToMessage, err = ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
-	if query.Thumb != nil {
-		msg.Video.Thumb = query.Thumb
+	msg.Video, msg.Caption = vid.(*modals.Video).ID, &query.Caption
+	if query.ReplyToMessageID != 0 {
+		rep, _ := ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+		msg.ReplyToMessage = rep.ID
 	}
 
 	err = ms.dbs.InsertMessage(msg)

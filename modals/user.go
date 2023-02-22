@@ -1,8 +1,6 @@
 package modals
 
-import (
-	"time"
-)
+import "time"
 
 type User struct {
 	// Unique ID of the User
@@ -15,17 +13,34 @@ type User struct {
 	Username string `json:"username"`
 	// Bio of the user
 	Bio string `json:"bio"`
-	// Metadata is the user meta data
-	Metadata UserMD
+	// Email is the email of the user
+	Email string `json:"-" validate:"email"`
+	// Password is the password of the user
+	Password string `json:"-" validate:"min:6"`
+	// Chats is the list of chats the user is in
+	Chats []Participant `json:"chats" gorm:"foreignKey:UserID"`
+
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+	DeletedAt time.Time `json:"-" gorm:"index"`
 }
 
-type UserMD struct {
-	Chats     map[uint64]bool `json:"chats"`
-	Email     string          `json:"email" validate:"email"`
-	Password  string          `json:"password" validate:"min:6"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time `gorm:"index"`
+type Participant struct {
+	// Unique ID of the ChatId
+	ID uint64 `json:"-" gorm:"primaryKey"`
+	// UserID is the ID of the user
+	UserID uint64 `json:"user_id"`
+	// ChatID is the ID of the chat
+	ChatID uint64 `json:"chat_id"`
+}
+
+type Admin struct {
+	// Unique ID of the ChatId
+	ID uint64 `json:"-" gorm:"primaryKey"`
+	// UserID is the ID of the user
+	UserID uint64 `json:"user_id"`
+	// ChatID is the ID of the chat
+	ChatID uint64 `json:"chat_id"`
 }
 
 func NewUser() *User {
@@ -45,13 +60,17 @@ func (u *User) GetUserName() string {
 }
 
 func (u *User) GetEmail() string {
-	return u.Metadata.Email
+	return u.Email
 }
 
 func (u *User) GetPassword() string {
-	return u.Metadata.Password
+	return u.Password
 }
 
 func (u *User) GetChats() map[uint64]bool {
-	return u.Metadata.Chats
+	chats := make(map[uint64]bool)
+	for _, chat := range u.Chats {
+		chats[chat.ChatID] = true
+	}
+	return chats
 }

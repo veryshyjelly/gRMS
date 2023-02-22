@@ -12,7 +12,10 @@ func (ms *MsgService) Text(query *TextQuery) (*modals.Message, error) {
 	}
 
 	msg.Text = &query.Text
-	msg.ReplyToMessage, _ = ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+	if query.ReplyToMessageID != 0 {
+		rep, _ := ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+		msg.ReplyToMessage = rep.ID
+	}
 
 	err = ms.dbs.InsertMessage(msg)
 	return msg, err

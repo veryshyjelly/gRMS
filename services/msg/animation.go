@@ -17,14 +17,10 @@ func (ms *MsgService) Animation(query *AnimationQuery) (*modals.Message, error) 
 		return nil, fmt.Errorf("error creating message: %v", err)
 	}
 
-	msg.Animation, msg.Caption = anim.(*modals.Animation), &query.Caption
-	msg.ReplyToMessage, err = ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
-
-	if query.Thumb != 0 {
-		thumb, err := ms.dbs.GetPhoto(query.Thumb)
-		if err == nil {
-			msg.Animation.Thumb = thumb.(*modals.Photo)
-		}
+	msg.Animation, msg.Caption = anim.(*modals.Animation).ID, &query.Caption
+	if query.ReplyToMessageID != 0 {
+		rep, _ := ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+		msg.ReplyToMessage = rep.ID
 	}
 
 	err = ms.dbs.InsertMessage(msg)

@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -6,13 +6,11 @@ import (
 )
 
 // CreateDocument function to create a new document entry
-func (sr *DBService) CreateDocument(filepath, filename string, thumb *modals.Photo) Media {
+func (sr *DBService) CreateDocument(filepath, filename string, thumb uint64) Media {
 	doc := modals.Document{
-		Thumb: thumb,
-		Metadata: &modals.MediaMD{
-			Filename: filename,
-			Filepath: filepath,
-		},
+		Thumb:    thumb,
+		Filename: filename,
+		Filepath: filepath,
 	}
 
 	sr.db.Create(&doc)

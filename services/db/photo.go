@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -6,13 +6,11 @@ import (
 )
 
 // CreatePhoto function to create new photo entry
-func (sr *DBService) CreatePhoto(filepath, filename string, thumb *modals.Photo) Media {
+func (sr *DBService) CreatePhoto(filepath, filename string, thumb uint64) Media {
 	photo := modals.Photo{
-		Thumb: thumb,
-		Metadata: &modals.MediaMD{
-			Filename: filename,
-			Filepath: filepath,
-		},
+		Thumb:    thumb,
+		Filename: filename,
+		Filepath: filepath,
 	}
 
 	sr.db.Create(&photo)

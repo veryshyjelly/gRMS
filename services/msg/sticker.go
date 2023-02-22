@@ -14,8 +14,11 @@ func (ms *MsgService) Sticker(query *StickerQuery) (*modals.Message, error) {
 		return nil, err
 	}
 
-	msg.Sticker = stk.(*modals.Sticker)
-	msg.ReplyToMessage, err = ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+	msg.Sticker = stk.(*modals.Sticker).ID
+	if query.ReplyToMessageID != 0 {
+		rep, _ := ms.dbs.GetMessage(query.ReplyToMessageID, query.ChatID)
+		msg.ReplyToMessage = rep.ID
+	}
 
 	err = ms.dbs.InsertMessage(msg)
 	return msg, err

@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import "chat-app/modals"
 
@@ -12,37 +12,37 @@ func (sr *DBService) NewFile(fileId uint64, filetype modals.Filetype) (*modals.F
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = ph.GetFilepath()
+		file.Filepath = ph.GetMetaData().Filepath
 	case modals.AudioType:
 		au, err := sr.GetAudio(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = au.GetFilepath()
+		file.Filepath = au.GetMetaData().Filepath
 	case modals.VideoType:
 		vd, err := sr.GetVideo(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = vd.GetFilepath()
+		file.Filepath = vd.GetMetaData().Filepath
 	case modals.DocumentType:
 		doc, err := sr.GetDocument(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = doc.GetFilepath()
+		file.Filepath = doc.GetMetaData().Filepath
 	case modals.StickerType:
 		stk, err := sr.GetSticker(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = stk.GetFilepath()
+		file.Filepath = stk.GetMetaData().Filepath
 	case modals.AnimationType:
 		anim, err := sr.GetAnimation(fileId)
 		if err != nil {
 			return nil, err
 		}
-		file.Filepath = anim.GetFilepath()
+		file.Filepath = anim.GetMetaData().Filepath
 	}
 
 	return &file, nil

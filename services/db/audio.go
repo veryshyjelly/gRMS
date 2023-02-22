@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -6,13 +6,11 @@ import (
 )
 
 // CreateAudio function to create a new audio entry
-func (sr *DBService) CreateAudio(filepath, filename string, thumb *modals.Photo) Media {
+func (sr *DBService) CreateAudio(filepath, filename string, thumb uint64) Media {
 	audio := modals.Audio{
 		Filename: filename,
 		Thumb:    thumb,
-		Metadata: &modals.MediaMD{
-			Filepath: filepath,
-		},
+		Filepath: filepath,
 	}
 
 	sr.db.Create(&audio)

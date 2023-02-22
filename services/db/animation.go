@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -6,13 +6,11 @@ import (
 )
 
 // CreateAnimation to create a new Animation entry
-func (sr *DBService) CreateAnimation(filepath, filename string, thumb *modals.Photo) Media {
+func (sr *DBService) CreateAnimation(filepath, filename string, thumb uint64) Media {
 	animation := modals.Animation{
-		Thumb: thumb,
-		Metadata: &modals.MediaMD{
-			Filepath: filepath,
-			Filename: filename,
-		},
+		Thumb:    thumb,
+		Filepath: filepath,
+		Filename: filename,
 	}
 
 	sr.db.Create(&animation)

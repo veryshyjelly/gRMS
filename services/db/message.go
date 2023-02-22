@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -17,7 +17,7 @@ func (sr *DBService) CreateMessage(chatID, userID uint64) (*modals.Message, erro
 		return nil, err
 	}
 
-	return &modals.Message{Chat: chat, From: user}, nil
+	return &modals.Message{Chat: chat.ID, From: user.ID}, nil
 }
 
 // GetMessage used to find message in the chat table
@@ -41,5 +41,5 @@ func (sr *DBService) GetAllMessages(chatID uint64) []*modals.Message {
 }
 
 func (sr *DBService) InsertMessage(m *modals.Message) error {
-	return sr.db.Table(fmt.Sprint(m.Chat.ID)).Create(m).Error
+	return sr.db.Table(fmt.Sprint(m.Chat)).Create(m).Error
 }

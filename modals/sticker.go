@@ -9,10 +9,16 @@ type Sticker struct {
 	ID uint64 `json:"id" gorm:"primaryKey"`
 	// Emoji associated with the sticker
 	Emoji string `json:"emoji"`
+	// Filename is the name of the file
+	Filename string `json:"filename"`
 	// Filesize is the size of the file in kb
 	Filesize uint64 `json:"filesize"`
-	// Metadata is the metadata of the file
-	Metadata *MediaMD
+	// Filepath is the path of the file
+	Filepath string `json:"filepath"`
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time `gorm:"index"`
 }
 
 func (st Sticker) GetType() Filetype {
@@ -23,16 +29,12 @@ func (st Sticker) GetFileID() uint64 {
 	return st.ID
 }
 
-func (st Sticker) GetFilesize() uint64 {
-	return st.Filesize
-}
-
-func (st Sticker) GetFilename() string {
-	return st.Metadata.Filename
-}
-
-func (st Sticker) GetFilepath() string {
-	return st.Metadata.Filepath
+func (st Sticker) GetMetaData() *MediaMD {
+	return &MediaMD{
+		Filename: st.Filename,
+		Filesize: st.Filesize,
+		Filepath: st.Filepath,
+	}
 }
 
 func (st Sticker) GetFileLinkExpiry() time.Time {

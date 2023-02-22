@@ -7,10 +7,10 @@ type Update struct {
 	Message *Message `json:"message"`
 	// EditedMessage new version of message that was already sent
 	EditedMessage *Message `json:"edited_message"`
-	// ChatMember when status of a chat member is updated (for ex: permissions changed)
-	ChatMember ChatMemberUpdated `json:"chat_member"`
-	// ChatJoinRequest a request to join the chat has been sent
-	ChatJoinRequest ChatJoinRequest `json:"chat_join_request"`
+	// NewChatCreated a new chat has been created
+	NewChatCreated *Chat `json:"new_chat_created"`
+	// Error is the error message
+	Error error `json:"error"`
 }
 
 func NewUpdate(id uint64, mess *Message) *Update {

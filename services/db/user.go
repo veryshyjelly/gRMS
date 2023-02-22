@@ -1,4 +1,4 @@
-package dbservice
+package dbService
 
 import (
 	"chat-app/modals"
@@ -8,20 +8,22 @@ import (
 // CreateUser function to create a new user entry
 func (sr *DBService) CreateUser(firstName, lastName, username, email, password string) (*modals.User, error) {
 	user := modals.User{}
-
 	sr.db.First(&user, "email = ?", email)
 	if user.GetEmail() != "" {
 		return nil, fmt.Errorf("email already exists")
+	}
+	sr.db.First(&user, "username = ?", username)
+	if user.GetUserName() != "" {
+		return nil, fmt.Errorf("username already exists")
 	}
 
 	user = modals.User{
 		FirstName: firstName,
 		LastName:  lastName,
 		Username:  username,
-		Metadata: modals.UserMD{
-			Email:    email,
-			Password: password,
-		},
+		Email:     email,
+		Password:  password,
+		Chats:     make([]modals.Participant, 0),
 	}
 
 	sr.db.Create(&user)
@@ -33,7 +35,7 @@ func (sr *DBService) CreateUser(firstName, lastName, username, email, password s
 func (sr *DBService) GetUser(userID uint64) (*modals.User, error) {
 	user := modals.User{}
 
-	sr.db.First(&user, "id = ?", userID)
+	sr.db.Preload("Chats").First(&user, "id = ?", userID)
 	if user.ID == 0 {
 		return nil, fmt.Errorf("invalid user id: %v", userID)
 	}
@@ -41,10 +43,10 @@ func (sr *DBService) GetUser(userID uint64) (*modals.User, error) {
 	return &user, nil
 }
 
-func (sr *DBService) FindUser(username, password string) (*modals.User, error) {
+func (sr *DBService) FindUser(username string) (*modals.User, error) {
 	user := modals.User{}
 
-	sr.db.First(&user, "username = ? AND password = ?", username, password)
+	sr.db.Preload("Chats").First(&user, "username = ?", username)
 	if user.ID == 0 {
 		return nil, fmt.Errorf("invalid username or password")
 	}

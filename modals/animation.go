@@ -12,13 +12,21 @@ type Animation struct {
 	// Height of the Animation
 	Height uint64 `json:"height"`
 	// Thumb is the thumbnail of the Animation
-	Thumb *Photo `json:"thumb"`
+	Thumb uint64 `json:"thumb"`
 	// Duration is the time duration of the Animation
 	Duration time.Duration `json:"duration"`
 	// MimeType is the mime type of the file
 	MimeType string `json:"mime_type"`
-	// Metadata is the metadata of the file
-	Metadata *MediaMD
+	// Filename is the name of the file
+	Filename string `json:"filename"`
+	// Filesize is the size of the file in kb
+	Filesize uint64 `json:"filesize"`
+	// Filepath is the path of the file
+	Filepath string `json:"filepath"`
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time `gorm:"index"`
 }
 
 func NewAnimation() *Animation {
@@ -33,16 +41,12 @@ func (an *Animation) GetFileID() uint64 {
 	return an.ID
 }
 
-func (an *Animation) GetFilesize() uint64 {
-	return an.Metadata.Filesize
-}
-
-func (an *Animation) GetFilename() string {
-	return an.Metadata.Filename
-}
-
-func (an *Animation) GetFilepath() string {
-	return an.Metadata.Filepath
+func (an *Animation) GetMetaData() *MediaMD {
+	return &MediaMD{
+		Filename: an.Filename,
+		Filesize: an.Filesize,
+		Filepath: an.Filepath,
+	}
 }
 
 func (an *Animation) GetFileLinkExpiry() time.Time {

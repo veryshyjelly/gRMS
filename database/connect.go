@@ -1,6 +1,7 @@
 package database
 
 import (
+	"chat-app/modals"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -28,5 +29,11 @@ func Connect(level logger.LogLevel) {
 	})
 	if err != nil {
 		log.Fatalln("failed to connected to database: ", err)
+	}
+
+	err = ChatDb.AutoMigrate(&modals.User{}, &modals.Chat{}, &modals.Message{}, &modals.Participant{}, &modals.Photo{},
+		&modals.Sticker{}, &modals.Video{}, &modals.Audio{}, &modals.Document{})
+	if err != nil {
+		log.Fatalln("failed to migrate database: ", err)
 	}
 }

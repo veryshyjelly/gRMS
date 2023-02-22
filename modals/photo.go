@@ -8,9 +8,17 @@ type Photo struct {
 	// Unique ID of the Photo
 	ID uint64 `json:"id" gorm:"primaryKey"`
 	// Thumb is the thumbnail for the Document
-	Thumb *Photo `json:"thumb"`
-	// Metadata is the metadata of the file
-	Metadata *MediaMD
+	Thumb uint64 `json:"thumb"`
+	// Filename is the name of the file
+	Filename string `json:"filename"`
+	// Filesize is the size of the file in kb
+	Filesize uint64 `json:"filesize"`
+	// Filepath is the path of the file
+	Filepath string `json:"filepath"`
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time `gorm:"index"`
 }
 
 func (ph Photo) GetType() Filetype {
@@ -21,16 +29,12 @@ func (ph Photo) GetFileID() uint64 {
 	return ph.ID
 }
 
-func (ph Photo) GetFilesize() uint64 {
-	return ph.Metadata.Filesize
-}
-
-func (ph Photo) GetFilename() string {
-	return ph.Metadata.Filename
-}
-
-func (ph Photo) GetFilepath() string {
-	return ph.Metadata.Filepath
+func (ph Photo) GetMetaData() *MediaMD {
+	return &MediaMD{
+		Filename: ph.Filename,
+		Filesize: ph.Filesize,
+		Filepath: ph.Filepath,
+	}
 }
 
 func (ph Photo) GetFileLinkExpiry() time.Time {
