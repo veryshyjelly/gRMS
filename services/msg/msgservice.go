@@ -5,6 +5,8 @@ import (
 	dbService "chat-app/services/db"
 )
 
+var MGSr *MsgService
+
 type MsgS interface {
 	Text(*TextQuery) (*modals.Message, error)
 	Photo(*PhotoQuery) (*modals.Message, error)

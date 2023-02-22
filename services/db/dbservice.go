@@ -5,6 +5,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var DBSr *DBService
+
 type DBS interface { // DBService is the interface for all the database services
 	CreateUser(firstName, lastName, username, email, password string) (*modals.User, error)
 	GetUser(userID uint64) (*modals.User, error)
@@ -32,6 +34,7 @@ type DBS interface { // DBService is the interface for all the database services
 	GetMedia(mediaID uint64, filetype modals.Filetype) (Media, error)
 	CreateMessage(chatID uint64, userID uint64) (*modals.Message, error)
 	GetMessage(messageID, chatID uint64) (*modals.Message, error)
+	GetAllMessages(chatId uint64) []*modals.Message
 	InsertMessage(message *modals.Message) error
 }
 

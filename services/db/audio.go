@@ -10,7 +10,7 @@ func (sr *DBService) CreateAudio(filepath, filename string, thumb *modals.Photo)
 	audio := modals.Audio{
 		Filename: filename,
 		Thumb:    thumb,
-		Metadata: &MediaMD{
+		Metadata: &modals.MediaMD{
 			Filepath: filepath,
 		},
 	}

@@ -9,7 +9,7 @@ import (
 func (sr *DBService) CreateAnimation(filepath, filename string, thumb *modals.Photo) Media {
 	animation := modals.Animation{
 		Thumb: thumb,
-		Metadata: &MediaMD{
+		Metadata: &modals.MediaMD{
 			Filepath: filepath,
 			Filename: filename,
 		},

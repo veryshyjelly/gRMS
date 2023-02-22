@@ -9,7 +9,7 @@ import (
 func (sr *DBService) CreatePhoto(filepath, filename string, thumb *modals.Photo) Media {
 	photo := modals.Photo{
 		Thumb: thumb,
-		Metadata: &MediaMD{
+		Metadata: &modals.MediaMD{
 			Filename: filename,
 			Filepath: filepath,
 		},

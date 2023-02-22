@@ -15,18 +15,6 @@ type Media interface {
 	GetFileLinkExpiry() time.Time
 }
 
-type MediaMD struct {
-	// Filesize is the size of the file in kb
-	Filesize uint64 `json:"filesize"`
-	// Filename is the name of the file
-	Filename string `json:"filename"`
-	// Filepath is the path of the file
-	Filepath  string `json:"filepath"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time `gorm:"index"`
-}
-
 // CreateMedia is a convenience method to create a media entry
 func (sr *DBService) CreateMedia(filepath, filename string, filetype modals.Filetype) (Media, error) {
 	switch filetype {

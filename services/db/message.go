@@ -32,6 +32,14 @@ func (sr *DBService) GetMessage(messageID, chatID uint64) (*modals.Message, erro
 	return &mess, nil
 }
 
+func (sr *DBService) GetAllMessages(chatID uint64) []*modals.Message {
+	var mess []*modals.Message
+
+	sr.db.Table(fmt.Sprint(chatID)).Find(&mess)
+
+	return mess
+}
+
 func (sr *DBService) InsertMessage(m *modals.Message) error {
 	return sr.db.Table(fmt.Sprint(m.Chat.ID)).Create(m).Error
 }

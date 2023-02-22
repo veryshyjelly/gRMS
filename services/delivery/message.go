@@ -2,8 +2,7 @@ package delivery
 
 import (
 	"chat-app/modals"
-	"chat-app/services"
-	msgService "chat-app/services/msg"
+	"chat-app/services/msg"
 	"fmt"
 )
 
@@ -21,15 +20,15 @@ func SendMessage(m *MessQuery) {
 
 	switch {
 	case m.Text != nil:
-		msg, err = services.MGS.Text(m.Text)
+		msg, err = msgService.MGSr.Text(m.Text)
 	case m.Document != nil:
-		msg, err = services.MGS.Document(m.Document)
+		msg, err = msgService.MGSr.Document(m.Document)
 	case m.Photo != nil:
-		msg, err = services.MGS.Photo(m.Photo)
+		msg, err = msgService.MGSr.Photo(m.Photo)
 	case m.Audio != nil:
-		msg, err = services.MGS.Audio(m.Audio)
+		msg, err = msgService.MGSr.Audio(m.Audio)
 	case m.Video != nil:
-		msg, err = services.MGS.Video(m.Video)
+		msg, err = msgService.MGSr.Video(m.Video)
 	default:
 		err = fmt.Errorf("unknown message type")
 	}
@@ -38,6 +37,6 @@ func SendMessage(m *MessQuery) {
 		e := fmt.Sprintf("error while processing message: %v", err)
 		msg = &modals.Message{Text: &e}
 	} else {
-		services.DVS.Send(msg)
+		DVSr.Send(msg)
 	}
 }

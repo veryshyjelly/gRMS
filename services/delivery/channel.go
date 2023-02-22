@@ -2,7 +2,6 @@ package delivery
 
 import (
 	"chat-app/modals"
-	"chat-app/services"
 )
 
 type Channel struct {
@@ -34,9 +33,12 @@ func (c *Channel) Run() {
 			delete(c.Users, client)
 		case msg := <-c.Mess:
 			for client := range c.Users {
-				client.Mess <- msg
+				client.mu.Lock()
+				client.UpdateID++
+				client.Mess <- modals.NewUpdate(client.UpdateID, msg)
+				client.mu.Unlock()
 			}
 		}
 	}
-	delete(services.DVS.Channels, c.ChatID)
+	delete(DVSr.Channels, c.ChatID)
 }

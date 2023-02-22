@@ -1,7 +1,6 @@
 package modals
 
 import (
-	dbService "chat-app/services/db"
 	"time"
 )
 
@@ -11,7 +10,7 @@ type Photo struct {
 	// Thumb is the thumbnail for the Document
 	Thumb *Photo `json:"thumb"`
 	// Metadata is the metadata of the file
-	Metadata *dbService.MediaMD
+	Metadata *MediaMD
 }
 
 func (ph Photo) GetType() Filetype {

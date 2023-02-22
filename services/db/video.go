@@ -9,7 +9,7 @@ import (
 func (sr *DBService) CreateVideo(filepath, filename string, thumb *modals.Photo) Media {
 	video := modals.Video{
 		Thumb: thumb,
-		Metadata: &MediaMD{
+		Metadata: &modals.MediaMD{
 			Filename: filename,
 			Filepath: filepath,
 		},

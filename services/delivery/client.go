@@ -2,10 +2,10 @@ package delivery
 
 import (
 	"chat-app/modals"
-	"chat-app/services"
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/websocket/v2"
+	"sync"
 
 	"log"
 )
@@ -15,23 +15,25 @@ type Client struct {
 	User       *modals.User
 	Chats      map[uint64]bool
 	Connection *websocket.Conn
-	Mess       chan *modals.Message
+	Mess       chan *modals.Update
+	UpdateID   uint64
+	mu         sync.Mutex
 }
 
 func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 	client := &Client{
 		User:       user,
 		Connection: connection,
-		Mess:       make(chan *modals.Message),
+		Mess:       make(chan *modals.Update),
 		Chats:      user.GetChats(),
 	}
 
 	for chatID := range client.Chats {
-		if channel, ok := services.DVS.Channels[chatID]; ok {
+		if channel, ok := DVSr.Channels[chatID]; ok {
 			channel.Join <- client
 		} else {
 			channel := NewChannel(chatID)
-			services.DVS.Channels[chatID] = channel
+			DVSr.Channels[chatID] = channel
 			channel.Users[client] = true
 			go channel.Run()
 		}
@@ -43,7 +45,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 func (c *Client) Read() {
 	defer func() {
 		for chatID := range c.Chats {
-			if channel, ok := services.DVS.Channels[chatID]; ok {
+			if channel, ok := DVSr.Channels[chatID]; ok {
 				channel.Leave <- c
 			}
 		}
@@ -60,7 +62,7 @@ func (c *Client) Read() {
 		err = json.Unmarshal(p, req)
 		if err != nil {
 			e := fmt.Sprintf("error while unmarshaling message: %v", err)
-			c.Mess <- &modals.Message{Text: &e}
+			c.Mess <- modals.NewUpdate(0, &modals.Message{Text: &e})
 		}
 
 		if req.Message != nil {

@@ -1,7 +1,7 @@
 package connect
 
 import (
-	"chat-app/services"
+	dbservice "chat-app/services/db"
 	"chat-app/services/delivery"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
@@ -11,7 +11,7 @@ func ConnClient(c *fiber.Ctx) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
-	user, err := services.DBS.FindUser(username, password)
+	user, err := dbservice.DBSr.FindUser(username, password)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
@@ -20,8 +20,9 @@ func ConnClient(c *fiber.Ctx) error {
 
 	websocket.New(func(c *websocket.Conn) {
 		client := delivery.NewClient(user, c)
-		go client.Read()
-		client.Listen()
+		go client.SyncHistory()
+		go client.Listen()
+		client.Read()
 	})
 
 	return nil

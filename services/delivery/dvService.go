@@ -7,6 +7,12 @@ import (
 	"sync"
 )
 
+var DVSr *DvService
+
+type DVS interface {
+	Send(*modals.Message)
+}
+
 type DvService struct {
 	Mgs      msgService.MsgS
 	Channels map[uint64]*Channel

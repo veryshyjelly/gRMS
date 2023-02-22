@@ -9,7 +9,7 @@ import (
 func (sr *DBService) CreateSticker(filepath, emoji string) Media {
 	sticker := modals.Sticker{
 		Emoji: emoji,
-		Metadata: &MediaMD{
+		Metadata: &modals.MediaMD{
 			Filepath: filepath,
 		},
 	}

@@ -1,7 +1,7 @@
 package connect
 
 import (
-	"chat-app/services"
+	dbservice "chat-app/services/db"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -12,7 +12,7 @@ func SignUp(c *fiber.Ctx) error {
 	password := c.FormValue("password")
 	email := c.FormValue("email")
 
-	user, err := services.DBS.CreateUser(firstName, lastName, userName, email, password)
+	user, err := dbservice.DBSr.CreateUser(firstName, lastName, userName, email, password)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
