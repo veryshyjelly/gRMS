@@ -9,8 +9,10 @@ type Update struct {
 	EditedMessage *Message `json:"edited_message"`
 	// NewChatCreated a new chat has been created
 	NewChatCreated *Chat `json:"new_chat_created"`
+	// User is the user data requested
+	User *User `json:"user"`
 	// Error is the error message
-	Error error `json:"error"`
+	Error string `json:"error"`
 }
 
 func NewUpdate(id uint64, mess *Message) *Update {

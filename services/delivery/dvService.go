@@ -18,6 +18,8 @@ type DvService struct {
 	Channels map[uint64]*Channel
 	Users    map[uint64]*Client
 	mu       sync.Mutex
+	Leave    chan uint64
+	Stop     chan uint64
 }
 
 func NewDvService(mgs msgService.MsgS) *DvService {
@@ -25,5 +27,7 @@ func NewDvService(mgs msgService.MsgS) *DvService {
 		Mgs:      mgs,
 		Channels: make(map[uint64]*Channel),
 		Users:    make(map[uint64]*Client),
+		Leave:    make(chan uint64),
+		Stop:     make(chan uint64),
 	}
 }

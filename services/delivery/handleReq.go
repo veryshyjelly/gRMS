@@ -2,16 +2,17 @@ package delivery
 
 import (
 	"chat-app/modals"
+	dbService "chat-app/services/db"
 	"encoding/json"
 	"fmt"
 )
 
 type Req struct {
-	Message  *MessQuery     `json:"message"`
-	NewChat  *NewChatQuery  `json:"new_chat"`
-	ChatJoin *ChatJoinQuery `json:"chat_join"`
-	GetUser  uint64         `json:"get_user"`
-	GetChat  uint64         `json:"get_chat"`
+	Message  *MessQuery    `json:"message"`
+	NewChat  *NewChatQuery `json:"new_chat"`
+	ChatJoin *AddUserQuery `json:"add_user"`
+	GetUser  uint64        `json:"get_user"`
+	GetChat  uint64        `json:"get_chat"`
 	//Forward *msgService.ForwardQuery  `json:"forward"`
 }
 
@@ -35,5 +36,14 @@ func (c *Client) HandleReq(p []byte) {
 
 	if req.ChatJoin != nil {
 		c.HandleAddToChat(req.ChatJoin)
+	}
+
+	if req.GetUser != 0 {
+		user, err := dbService.DBSr.GetUser(req.GetUser)
+		if err != nil {
+			c.Mess <- &modals.Update{Error: fmt.Sprintf("error finding user: %v", err)}
+		} else {
+			c.Mess <- &modals.Update{User: user}
+		}
 	}
 }

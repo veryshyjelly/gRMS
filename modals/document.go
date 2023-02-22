@@ -15,6 +15,10 @@ type Document struct {
 	Filesize uint64 `json:"filesize"`
 	// Filepath is the path of the file
 	Filepath string `json:"filepath"`
+
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+	DeletedAt time.Time `json:"-" gorm:"index"`
 }
 
 func (doc Document) GetType() Filetype {

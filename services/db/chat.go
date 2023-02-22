@@ -23,6 +23,7 @@ func (sr *DBService) CreateChat(users []uint64, title string) (*modals.Chat, err
 	if err != nil {
 		return nil, fmt.Errorf("error creating group: %v", err)
 	}
+	chat.Admins = append(chat.Admins, modals.Admin{UserID: users[0]})
 
 	for _, v := range users {
 		rel, err := DBSr.AddMember(chat.ID, v)

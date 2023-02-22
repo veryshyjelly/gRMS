@@ -16,9 +16,9 @@ type Sticker struct {
 	// Filepath is the path of the file
 	Filepath string `json:"filepath"`
 
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt time.Time `gorm:"index"`
+	CreatedAt time.Time `json:"-"`
+	UpdatedAt time.Time `json:"-"`
+	DeletedAt time.Time `json:"-" gorm:"index"`
 }
 
 func (st Sticker) GetType() Filetype {

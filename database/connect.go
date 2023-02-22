@@ -31,7 +31,8 @@ func Connect(level logger.LogLevel) {
 		log.Fatalln("failed to connected to database: ", err)
 	}
 
-	err = ChatDb.AutoMigrate(&modals.User{}, &modals.Chat{}, &modals.Message{}, &modals.Participant{}, &modals.Photo{},
+	err = ChatDb.AutoMigrate(&modals.User{}, &modals.Chat{}, &modals.Message{}, &modals.Participant{},
+		&modals.Admin{}, &modals.Photo{},
 		&modals.Sticker{}, &modals.Video{}, &modals.Audio{}, &modals.Document{})
 	if err != nil {
 		log.Fatalln("failed to migrate database: ", err)

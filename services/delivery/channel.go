@@ -3,6 +3,7 @@ package delivery
 import (
 	"chat-app/modals"
 	"fmt"
+	"sync"
 )
 
 type Channel struct {
@@ -16,6 +17,8 @@ type Channel struct {
 	Join chan *Client
 	// Leave is the chan to remove a user from the channel
 	Leave chan *Client
+	//
+	mu sync.Mutex
 }
 
 func NewChannel(chatID uint64) *Channel {
@@ -31,14 +34,21 @@ func NewChannel(chatID uint64) *Channel {
 // Run is the main function of the channel
 // that listens to the Join, Leave and Mess requests
 func (c *Channel) Run() {
+	fmt.Println("channel started", c.ChatID)
 	for len(c.Users) > 0 {
 		select {
 		case client := <-c.Join:
-			fmt.Printf("new user %v joined in %v", client.User.Username, c.ChatID)
+			fmt.Printf("new user %v joined in %v\n", client.User.Username, c.ChatID)
+			c.mu.Lock()
 			c.Users[client] = true
+			c.mu.Unlock()
+
 		case client := <-c.Leave:
 			fmt.Println("user left", client.User.Username)
+			c.mu.Lock()
 			delete(c.Users, client)
+			c.mu.Unlock()
+
 		case msg := <-c.Mess:
 			for client := range c.Users {
 				client.mu.Lock()
@@ -48,5 +58,6 @@ func (c *Channel) Run() {
 			}
 		}
 	}
+	fmt.Println("channel closed", c.ChatID)
 	delete(DVSr.Channels, c.ChatID)
 }

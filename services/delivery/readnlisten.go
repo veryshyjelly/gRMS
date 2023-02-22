@@ -28,10 +28,17 @@ func (c *Client) Read() {
 }
 
 func (c *Client) Listen() {
+	fmt.Println("listening to client", c.User.ID)
 	for {
-		msg := <-c.Mess
-		if err := c.Connection.WriteJSON(msg); err != nil {
-			log.Println("error while writing message to client", err)
+		select {
+		case msg := <-c.Mess:
+			if err := c.Connection.WriteJSON(msg); err != nil {
+				log.Println("error while writing message to client", err)
+			}
+		case chatID := <-c.Join:
+			c.mu.Lock()
+			c.Chats[chatID] = true
+			c.mu.Unlock()
 		}
 	}
 }

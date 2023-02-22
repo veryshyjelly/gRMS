@@ -26,6 +26,12 @@ func (sr *DBService) CreateUser(firstName, lastName, username, email, password s
 		Chats:     make([]modals.Participant, 0),
 	}
 
+	//validate := validator.Validate{}
+	//err := validate.Struct(user)
+	//if err != nil {
+	//	return nil, fmt.Errorf("invalid user data: %v", err)
+	//}
+
 	sr.db.Create(&user)
 
 	return &user, nil
@@ -48,7 +54,7 @@ func (sr *DBService) FindUser(username string) (*modals.User, error) {
 
 	sr.db.Preload("Chats").First(&user, "username = ?", username)
 	if user.ID == 0 {
-		return nil, fmt.Errorf("invalid username or password")
+		return nil, fmt.Errorf("invalid username")
 	}
 
 	return &user, nil
