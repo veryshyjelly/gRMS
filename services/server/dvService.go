@@ -1,4 +1,4 @@
-package delivery
+package server
 
 import (
 	"chat-app/modals"

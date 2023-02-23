@@ -3,12 +3,12 @@ package services
 import (
 	"chat-app/database"
 	"chat-app/services/db"
-	"chat-app/services/delivery"
 	"chat-app/services/msg"
+	"chat-app/services/server"
 )
 
 func Connect() {
 	dbService.DBSr = dbService.NewDBService(database.ChatDb)
 	msgService.MGSr = msgService.NewMsgService(dbService.DBSr)
-	delivery.DVSr = delivery.NewDvService(msgService.MGSr)
+	server.DVSr = server.NewDvService(msgService.MGSr)
 }
