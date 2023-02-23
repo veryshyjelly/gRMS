@@ -21,10 +21,10 @@ type Channel struct {
 	mu sync.Mutex
 }
 
-func NewChannel(chatID uint64) *Channel {
+func NewChannel(chatID uint64, user *Client) *Channel {
 	return &Channel{
 		ChatID: chatID,
-		Users:  make(map[*Client]bool),
+		Users:  map[*Client]bool{user: true},
 		Mess:   make(chan *modals.Message),
 		Join:   make(chan *Client),
 		Leave:  make(chan *Client),
@@ -38,26 +38,19 @@ func (c *Channel) Run() {
 	for len(c.Users) > 0 {
 		select {
 		case client := <-c.Join:
-			fmt.Printf("new user %v joined in %v\n", client.User.Username, c.ChatID)
-			c.mu.Lock()
+			fmt.Printf("new user %v joined in %v\n", client.GetUsername(), c.ChatID)
 			c.Users[client] = true
-			c.mu.Unlock()
 
 		case client := <-c.Leave:
-			fmt.Println("user left", client.User.Username)
-			c.mu.Lock()
+			fmt.Println("user left", client.GetUsername())
 			delete(c.Users, client)
-			c.mu.Unlock()
 
 		case msg := <-c.Mess:
 			for client := range c.Users {
-				client.mu.Lock()
-				client.UpdateID++
-				client.Mess <- modals.NewUpdate(client.UpdateID, msg)
-				client.mu.Unlock()
+				client.Updates() <- modals.MessageUpdate(msg)
 			}
 		}
 	}
-	fmt.Println("channel closed", c.ChatID)
-	delete(DVSr.Channels, c.ChatID)
+
+	DVSr.StopChannel() <- c.ChatID
 }

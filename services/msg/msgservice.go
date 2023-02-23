@@ -5,7 +5,7 @@ import (
 	dbService "chat-app/services/db"
 )
 
-var MGSr *MsgService
+var MGSr MsgS
 
 type MsgS interface {
 	Text(*TextQuery) (*modals.Message, error)

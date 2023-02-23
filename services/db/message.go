@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// CreateMessage creates a new message populated with Chat and User
+// CreateMessage creates a new message populated with Chat and user
 func (sr *DBService) CreateMessage(chatID, userID uint64) (*modals.Message, error) {
 	chat, err := sr.GetChat(chatID)
 	if err != nil {

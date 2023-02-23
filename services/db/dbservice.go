@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var DBSr *DBService
+var DBSr DBS
 
 type DBS interface { // DBService is the interface for all the database services
 	CreateUser(firstName, lastName, username, email, password string) (*modals.User, error)
@@ -18,6 +18,8 @@ type DBS interface { // DBService is the interface for all the database services
 	UpdateChat(chat *modals.Chat) error
 	SetChatPhoto(chatID uint64, photo *modals.Photo) (*modals.Chat, error)
 	DeleteChatPhoto(chatID uint64) (*modals.Chat, error)
+	AddMember(chatID uint64, userID uint64) (*modals.Participant, error)
+	AddAdmin(chatId uint64, userID uint64) (*modals.Admin, error)
 	CreatePhoto(filepath, filename string, thumb uint64) Media
 	GetPhoto(photoID uint64) (Media, error)
 	CreateVideo(filepath, filename string, thumb uint64) Media

@@ -16,25 +16,26 @@ type AddUserQuery struct {
 func (c *Client) HandleAddToChat(query *AddUserQuery) {
 	chat, err := dbService.DBSr.GetChat(query.ChatID)
 	if err != nil {
-		c.Mess <- &modals.Update{Error: fmt.Sprintf("error finding chat: %v", err)}
+		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding chat: %v", err))
 		return
 	}
 
-	if _, ok := chat.GetAdmins()[c.User.ID]; !ok {
-		c.Mess <- &modals.Update{Error: fmt.Sprintf("unauthorized attempt to add user to chat")}
+	if _, ok := chat.GetAdmins()[c.user.ID]; !ok {
+		c.Updates() <- modals.ErrorUpdate("you are not an admin of this chat")
 		return
 	}
 
 	_, err = dbService.DBSr.AddMember(chat.ID, query.UserID)
 	if err != nil {
-		c.Mess <- &modals.Update{Error: fmt.Sprintf("error adding user to group %v", err)}
+		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error adding user to chat: %v", err))
+		return
 	}
 
-	if p, ok := DVSr.Users[query.UserID]; ok {
-		p.Join <- chat.ID
-		if channel, ok := DVSr.Channels[chat.ID]; ok {
+	if p, ok := DVSr.ActiveUsers()[query.UserID]; ok {
+		p.ChatJoin() <- chat.ID
+		if channel, ok := DVSr.ActiveChannels()[chat.ID]; ok {
 			channel.Join <- p
-			p.Mess <- &modals.Update{NewChatCreated: chat}
+			p.updates <- modals.ChatUpdate(chat)
 		} else {
 			log.Fatalln("channel not found")
 		}

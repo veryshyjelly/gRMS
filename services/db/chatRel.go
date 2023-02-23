@@ -2,6 +2,7 @@ package dbService
 
 import "chat-app/modals"
 
+// AddMember creates a member relation of the user with the chat
 func (sr *DBService) AddMember(chatID uint64, userID uint64) (*modals.Participant, error) {
 	chatRel := modals.Participant{
 		ChatID: chatID,
@@ -15,6 +16,7 @@ func (sr *DBService) AddMember(chatID uint64, userID uint64) (*modals.Participan
 	return &chatRel, nil
 }
 
+// AddAdmin creates a admin relation of the user with the chat
 func (sr *DBService) AddAdmin(chatId uint64, userID uint64) (*modals.Admin, error) {
 	chatRel := modals.Admin{
 		ChatID: chatId,

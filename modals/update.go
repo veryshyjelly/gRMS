@@ -15,9 +15,18 @@ type Update struct {
 	Error string `json:"error"`
 }
 
-func NewUpdate(id uint64, mess *Message) *Update {
-	return &Update{
-		ID:      id,
-		Message: mess,
-	}
+func MessageUpdate(m *Message) *Update {
+	return &Update{Message: m}
+}
+
+func ErrorUpdate(err string) *Update {
+	return &Update{Error: err}
+}
+
+func ChatUpdate(chat *Chat) *Update {
+	return &Update{NewChatCreated: chat}
+}
+
+func UserUpdate(user *User) *Update {
+	return &Update{User: user}
 }

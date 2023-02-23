@@ -7,6 +7,8 @@ import (
 )
 
 func Connect(app *fiber.App) {
+	// This function registers the connection and the signup
+	// routes for the application
 	app.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)

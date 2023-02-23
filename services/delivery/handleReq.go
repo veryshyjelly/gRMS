@@ -16,18 +16,17 @@ type Req struct {
 	//Forward *msgService.ForwardQuery  `json:"forward"`
 }
 
-func (c *Client) HandleReq(p []byte) {
+func (dvs *DvService) HandleReq(p []byte, c *Client) {
 	req := &Req{}
 	err := json.Unmarshal(p, req)
 	if err != nil {
-		e := fmt.Sprintf("error while unmarshaling message: %v", err)
-		c.Mess <- modals.NewUpdate(0, &modals.Message{Text: &e})
+		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error unmarshaling request: %v", err))
 		return
 	}
 
 	if req.Message != nil {
 		fmt.Println("message received", req.Message.Text)
-		c.HandleMess(req.Message)
+		DVSr.HandleMess(req.Message, c)
 	}
 
 	if req.NewChat != nil {
@@ -41,9 +40,9 @@ func (c *Client) HandleReq(p []byte) {
 	if req.GetUser != 0 {
 		user, err := dbService.DBSr.GetUser(req.GetUser)
 		if err != nil {
-			c.Mess <- &modals.Update{Error: fmt.Sprintf("error finding user: %v", err)}
+			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding user: %v", err))
 		} else {
-			c.Mess <- &modals.Update{User: user}
+			c.Updates() <- modals.UserUpdate(user)
 		}
 	}
 }

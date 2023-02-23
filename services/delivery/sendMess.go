@@ -17,9 +17,9 @@ func (dvs *DvService) SendMess(msg *modals.Message) {
 func (dvs *DvService) SendChat(chat *modals.Chat) {
 	// This function sends the update that the
 	// chat has been created to all the users
-	if c, ok := DVSr.Channels[chat.ID]; ok {
+	if c, ok := DVSr.ActiveChannels()[chat.ID]; ok {
 		for client := range c.Users {
-			client.Mess <- &modals.Update{
+			client.Updates() <- &modals.Update{
 				NewChatCreated: chat,
 			}
 		}

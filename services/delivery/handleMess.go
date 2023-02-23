@@ -14,25 +14,26 @@ type MessQuery struct {
 	Video    *msgService.VideoQuery    `json:"video"`
 }
 
-func (c *Client) HandleMess(m *MessQuery) {
+// HandleMess handles the message query
+func (dvs *DvService) HandleMess(m *MessQuery, c *Client) {
 	var msg *modals.Message
 	var err error
 
 	switch {
 	case m.Text != nil:
-		m.Text.From = c.User.ID
+		m.Text.From = c.GetUserID()
 		msg, err = msgService.MGSr.Text(m.Text)
 	case m.Document != nil:
-		m.Document.From = c.User.ID
+		m.Document.From = c.GetUserID()
 		msg, err = msgService.MGSr.Document(m.Document)
 	case m.Photo != nil:
-		m.Photo.From = c.User.ID
+		m.Photo.From = c.GetUserID()
 		msg, err = msgService.MGSr.Photo(m.Photo)
 	case m.Audio != nil:
-		m.Audio.From = c.User.ID
+		m.Audio.From = c.GetUserID()
 		msg, err = msgService.MGSr.Audio(m.Audio)
 	case m.Video != nil:
-		m.Video.From = c.User.ID
+		m.Video.From = c.GetUserID()
 		msg, err = msgService.MGSr.Video(m.Video)
 	default:
 		err = fmt.Errorf("unknown message type")
@@ -42,6 +43,6 @@ func (c *Client) HandleMess(m *MessQuery) {
 		e := fmt.Sprintf("error while processing message: %v", err)
 		msg = &modals.Message{Text: &e}
 	} else {
-		DVSr.SendMess(msg)
+		dvs.SendMess(msg)
 	}
 }
