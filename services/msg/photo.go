@@ -34,8 +34,6 @@ type PhotoQuery struct {
 	ChatID uint64 `json:"chat_id"`
 	// PhotoID is the file ID of the photo to be sent
 	PhotoID uint64 `json:"photo"`
-	// Thumb is the thumbnail of the photo
-	Thumb uint64 `json:"thumb"`
 	// Caption is the photo caption
 	Caption string `json:"caption"`
 	// ReplyToMessageID is the id of replied message

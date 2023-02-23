@@ -46,6 +46,7 @@ func (c *Channel) Run() {
 			delete(c.Users, client)
 
 		case msg := <-c.Mess:
+			//fmt.Println("new message", msg)
 			for client := range c.Users {
 				client.Updates() <- modals.MessageUpdate(msg)
 			}
@@ -53,4 +54,5 @@ func (c *Channel) Run() {
 	}
 
 	DVSr.StopChannel() <- c.ChatID
+	fmt.Println("channel stopped", c.ChatID)
 }

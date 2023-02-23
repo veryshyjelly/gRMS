@@ -17,6 +17,7 @@ type Req struct {
 }
 
 func (dvs *DvService) HandleReq(p []byte, c *Client) {
+	fmt.Println("handling request", string(p))
 	req := &Req{}
 	err := json.Unmarshal(p, req)
 	if err != nil {

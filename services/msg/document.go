@@ -36,8 +36,6 @@ type DocumentQuery struct {
 	DocumentID uint64 `json:"document"`
 	// Caption is the document caption
 	Caption string `json:"caption"`
-	// Thumb is the thumbnail
-	Thumb uint64 `json:"thumb"`
 	// ReplyToMessageID is the id of replied message
 	ReplyToMessageID uint64 `json:"reply_to_message_id"`
 }

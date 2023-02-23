@@ -19,11 +19,14 @@ func (c *Client) Read() {
 		}
 	}()
 
+	fmt.Println("reading from client", c.user.ID)
+
 	for {
 		if _, p, err := c.Connection.ReadMessage(); err != nil {
 			log.Println("error while reading message from client", err)
 			break
 		} else {
+			fmt.Println("message received from client", c.user.ID)
 			DVSr.HandleReq(p, c)
 		}
 	}
@@ -36,7 +39,6 @@ func (c *Client) Listen() {
 		case msg := <-c.updates:
 			c.UpdateID++
 			msg.ID = c.UpdateID
-
 			if err := c.Connection.WriteJSON(msg); err != nil {
 				log.Println("error while writing message to client", err)
 			}

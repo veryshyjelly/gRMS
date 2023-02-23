@@ -36,21 +36,23 @@ func (c *Client) HandleNewChat(chatQuery *NewChatQuery) {
 		return
 	}
 
-	fmt.Println("chat created chat: ", chat.Title)
-
 	newChannel := NewChannel(chat.ID, c)
 	go newChannel.Run()
 	// Start the channel to handle the chat
 
+	DVSr.Lock()
 	DVSr.AddChannel() <- newChannel
+
 	HandleAllJoin(chat)
 }
 
 // HandleAllJoin adds all users to the channel
 func HandleAllJoin(chat *modals.Chat) {
+	DVSr.Lock()
+	defer DVSr.Unlock()
+
 	if channel, ok := DVSr.ActiveChannels()[chat.ID]; ok {
 		for _, parti := range chat.Members {
-			fmt.Println("user", parti.UserID)
 			if client, ok := DVSr.ActiveUsers()[parti.UserID]; ok {
 				client.ChatJoin() <- chat.ID
 				channel.Join <- client

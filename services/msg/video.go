@@ -36,8 +36,6 @@ type VideoQuery struct {
 	VideoID uint64 `json:"video"`
 	// Caption is the video caption
 	Caption string `json:"caption"`
-	// Thumb is the thumbnail of the video
-	Thumb *modals.Photo `json:"thumb"`
 	// ReplyToMessageID is the id of replied message
 	ReplyToMessageID uint64 `json:"reply_to_message_id"`
 }

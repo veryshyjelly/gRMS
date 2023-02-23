@@ -35,8 +35,6 @@ type AudioQuery struct {
 	AudioID uint64 `json:"audio"`
 	// Caption is the audio caption
 	Caption string `json:"caption"`
-	// Thumb is the thumbnail
-	Thumb uint64 `json:"thumb"`
 	// ReplyToMessageID is the id of replied message
 	ReplyToMessageID uint64 `json:"reply_to_message_id"`
 }

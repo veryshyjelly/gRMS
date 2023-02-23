@@ -27,6 +27,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 		chats:      user.GetChats(),
 	}
 
+	DVSr.Lock()
 	// Add the client to delivery service
 	DVSr.AddUser() <- client
 
@@ -39,6 +40,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 			channel := NewChannel(chatID, client)
 			go channel.Run()
 
+			DVSr.Lock()
 			DVSr.AddChannel() <- channel
 		}
 	}
@@ -46,6 +48,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 	return client
 }
 
+// GetChats returns the chats of the user
 func (c *Client) GetChats() map[uint64]bool {
 	return c.chats
 }

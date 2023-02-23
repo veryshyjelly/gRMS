@@ -20,6 +20,9 @@ type DVS interface {
 	LeaveUser() chan uint64
 	HandleMess(*MessQuery, *Client)
 	HandleReq([]byte, *Client)
+	Run()
+	Lock()
+	Unlock()
 }
 
 type DvService struct {
@@ -33,27 +36,41 @@ type DvService struct {
 	mu         sync.Mutex
 }
 
+func (dvs *DvService) Lock() {
+	fmt.Println("locking dv service")
+	dvs.mu.Lock()
+}
+
+func (dvs *DvService) Unlock() {
+	fmt.Println("unlocking dv service")
+	dvs.mu.Unlock()
+}
+
 func NewDvService(mgs msgService.MsgS) *DvService {
 	return &DvService{
 		Mgs:        mgs,
 		Channels:   make(map[uint64]*Channel),
 		Users:      make(map[uint64]*Client),
-		NewChannel: make(chan *Channel, 100),
-		NewUser:    make(chan *Client, 100),
-		EndChannel: make(chan uint64, 100),
-		UserLeft:   make(chan uint64, 100),
+		NewChannel: make(chan *Channel),
+		NewUser:    make(chan *Client),
+		EndChannel: make(chan uint64),
+		UserLeft:   make(chan uint64),
 	}
 }
 
 func (dvs *DvService) Run() {
+	fmt.Println("starting dv service")
 	for {
 		select {
 		case channel := <-dvs.NewChannel:
+			fmt.Println("new channel active", channel.ChatID)
 			dvs.Channels[channel.ChatID] = channel
-		case user := <-dvs.NewUser:
-			fmt.Println("new user active", user.GetUsername())
-			dvs.Users[user.ID] = user
-			user.ID = uint64(len(dvs.Users))
+			DVSr.Unlock()
+		case client := <-dvs.NewUser:
+			fmt.Println("new user active", client.GetUsername())
+			dvs.Users[client.GetUserID()] = client
+			client.ID = uint64(len(dvs.Users))
+			DVSr.Unlock()
 		case chatID := <-dvs.EndChannel:
 			fmt.Println("stopping chanel", chatID)
 			delete(dvs.Channels, chatID)
@@ -62,6 +79,7 @@ func (dvs *DvService) Run() {
 			delete(dvs.Users, userID)
 		}
 	}
+	fmt.Println("stopping dv service")
 }
 
 func (dvs *DvService) AddChannel() chan *Channel {

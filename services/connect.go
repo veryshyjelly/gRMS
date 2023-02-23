@@ -11,4 +11,5 @@ func Connect() {
 	dbService.DBSr = dbService.NewDBService(database.ChatDb)
 	msgService.MGSr = msgService.NewMsgService(dbService.DBSr)
 	server.DVSr = server.NewDvService(msgService.MGSr)
+	go server.DVSr.Run()
 }
