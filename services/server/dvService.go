@@ -21,8 +21,10 @@ type DVS interface {
 	HandleMess(*MessQuery, *Client)
 	HandleReq([]byte, *Client)
 	Run()
-	Lock()
-	Unlock()
+	LockUsers()
+	UnlockUsers()
+	LockChannels()
+	UnlockChannels()
 }
 
 type DvService struct {
@@ -33,17 +35,8 @@ type DvService struct {
 	NewUser    chan *Client
 	EndChannel chan uint64
 	UserLeft   chan uint64
-	mu         sync.Mutex
-}
-
-func (dvs *DvService) Lock() {
-	fmt.Println("locking dv service")
-	dvs.mu.Lock()
-}
-
-func (dvs *DvService) Unlock() {
-	fmt.Println("unlocking dv service")
-	dvs.mu.Unlock()
+	muUser     sync.Mutex
+	muChannel  sync.Mutex
 }
 
 func NewDvService(mgs msgService.MsgS) *DvService {
@@ -60,17 +53,17 @@ func NewDvService(mgs msgService.MsgS) *DvService {
 
 func (dvs *DvService) Run() {
 	fmt.Println("starting dv service")
+	defer fmt.Println("stopping dv service")
 	for {
 		select {
 		case channel := <-dvs.NewChannel:
 			fmt.Println("new channel active", channel.ChatID)
 			dvs.Channels[channel.ChatID] = channel
-			DVSr.Unlock()
+			DVSr.UnlockChannels()
 		case client := <-dvs.NewUser:
 			fmt.Println("new user active", client.GetUsername())
 			dvs.Users[client.GetUserID()] = client
-			client.ID = uint64(len(dvs.Users))
-			DVSr.Unlock()
+			DVSr.UnlockUsers()
 		case chatID := <-dvs.EndChannel:
 			fmt.Println("stopping chanel", chatID)
 			delete(dvs.Channels, chatID)
@@ -79,7 +72,6 @@ func (dvs *DvService) Run() {
 			delete(dvs.Users, userID)
 		}
 	}
-	fmt.Println("stopping dv service")
 }
 
 func (dvs *DvService) AddChannel() chan *Channel {
@@ -104,4 +96,24 @@ func (dvs *DvService) ActiveUsers() map[uint64]*Client {
 
 func (dvs *DvService) LeaveUser() chan uint64 {
 	return dvs.UserLeft
+}
+
+func (dvs *DvService) LockUsers() {
+	fmt.Println("locking users")
+	dvs.muUser.Lock()
+}
+
+func (dvs *DvService) UnlockUsers() {
+	fmt.Println("unlocking users")
+	dvs.muUser.Unlock()
+}
+
+func (dvs *DvService) LockChannels() {
+	fmt.Println("locking channel")
+	dvs.muChannel.Lock()
+}
+
+func (dvs *DvService) UnlockChannels() {
+	fmt.Println("unlocking channel")
+	dvs.muChannel.Unlock()
 }

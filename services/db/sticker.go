@@ -6,10 +6,11 @@ import (
 )
 
 // CreateSticker function to create a new sticker entry
-func (sr *DBService) CreateSticker(filepath, emoji string) Media {
+func (sr *DBService) CreateSticker(filepath, filename, emoji string) Media {
 	sticker := modals.Sticker{
 		Emoji:    emoji,
 		Filepath: filepath,
+		Filename: filename,
 	}
 
 	sr.db.Create(&sticker)

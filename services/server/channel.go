@@ -35,6 +35,11 @@ func NewChannel(chatID uint64, user *Client) *Channel {
 // that listens to the Join, Leave and Mess requests
 func (c *Channel) Run() {
 	fmt.Println("channel started", c.ChatID)
+	defer func() {
+		fmt.Println("channel stopped", c.ChatID)
+		DVSr.StopChannel() <- c.ChatID
+	}()
+
 	for len(c.Users) > 0 {
 		select {
 		case client := <-c.Join:
@@ -52,7 +57,4 @@ func (c *Channel) Run() {
 			}
 		}
 	}
-
-	DVSr.StopChannel() <- c.ChatID
-	fmt.Println("channel stopped", c.ChatID)
 }

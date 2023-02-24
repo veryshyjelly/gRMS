@@ -9,10 +9,10 @@ func (c *Client) Read() {
 	defer func() {
 		for chatID := range c.GetChats() {
 			if channel, ok := DVSr.ActiveChannels()[chatID]; ok {
-				fmt.Println("user left", c.user.Username)
 				channel.Leave <- c
 			}
 		}
+		fmt.Println("user left", c.user.Username)
 		DVSr.LeaveUser() <- c.GetUserID()
 		if err := c.Connection.Close(); err != nil {
 			log.Println("error while closing connection", err)
@@ -34,6 +34,7 @@ func (c *Client) Read() {
 
 func (c *Client) Listen() {
 	fmt.Println("listening to client", c.user.ID)
+	defer fmt.Println("stopped listening to client", c.user.ID)
 	for {
 		select {
 		case msg := <-c.updates:

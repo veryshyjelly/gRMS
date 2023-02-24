@@ -28,7 +28,7 @@ type DBS interface { // DBService is the interface for all the database services
 	GetAudio(audioID uint64) (Media, error)
 	CreateDocument(filepath, filename string, thumb uint64) Media
 	GetDocument(documentID uint64) (Media, error)
-	CreateSticker(filepath, emoji string) Media
+	CreateSticker(filepath, filename, emoji string) Media
 	GetSticker(stickerID uint64) (Media, error)
 	CreateAnimation(filepath, filename string, thumb uint64) Media
 	GetAnimation(animId uint64) (Media, error)

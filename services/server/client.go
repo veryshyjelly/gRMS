@@ -7,7 +7,6 @@ import (
 )
 
 type Client struct {
-	ID         uint64
 	UpdateID   uint64
 	user       *modals.User
 	chats      map[uint64]bool
@@ -27,7 +26,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 		chats:      user.GetChats(),
 	}
 
-	DVSr.Lock()
+	DVSr.LockUsers()
 	// Add the client to delivery service
 	DVSr.AddUser() <- client
 
@@ -40,7 +39,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 			channel := NewChannel(chatID, client)
 			go channel.Run()
 
-			DVSr.Lock()
+			DVSr.LockChannels()
 			DVSr.AddChannel() <- channel
 		}
 	}

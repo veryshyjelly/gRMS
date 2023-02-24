@@ -7,7 +7,7 @@ import (
 
 func (dvs *DvService) SendMess(msg *modals.Message) {
 	// This function sends the message where it needs to go
-	if channel, ok := dvs.Channels[msg.Chat]; ok {
+	if channel, ok := dvs.ActiveChannels()[msg.Chat]; ok {
 		channel.Mess <- msg
 	} else {
 		log.Println("error channel not found")
