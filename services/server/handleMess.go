@@ -4,6 +4,7 @@ import (
 	"chat-app/modals"
 	"chat-app/services/msg"
 	"fmt"
+	"log"
 )
 
 type MessQuery struct {
@@ -19,7 +20,7 @@ type MessQuery struct {
 }
 
 // HandleMess handles the message query
-func (dvs *DvService) HandleMess(m *MessQuery, c *Client) {
+func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 	var msg *modals.Message
 	var err error
 
@@ -77,5 +78,14 @@ func (dvs *DvService) HandleMess(m *MessQuery, c *Client) {
 		msg = &modals.Message{Text: &e}
 	} else {
 		dvs.SendMess(msg)
+	}
+}
+
+func (dvs *DvService) SendMess(msg *modals.Message) {
+	// This function sends the message where it needs to go
+	if channel, ok := dvs.ActiveChannels()[msg.Chat]; ok {
+		channel.Message() <- msg
+	} else {
+		log.Println("error channel not found")
 	}
 }

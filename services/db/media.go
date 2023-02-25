@@ -13,21 +13,39 @@ type Media interface {
 	GetFileLinkExpiry() time.Time
 }
 
+func GetFileType(tp string) (modals.Filetype, error) {
+	switch tp {
+	case "photo":
+		return modals.PhotoType, nil
+	case "video":
+		return modals.VideoType, nil
+	case "audio":
+		return modals.AudioType, nil
+	case "document":
+		return modals.DocumentType, nil
+	case "sticker":
+		return modals.StickerType, nil
+	default:
+		return 0, fmt.Errorf("invalid file typ")
+
+	}
+}
+
 // CreateMedia is a convenience method to create a media entry
-func (sr *DBService) CreateMedia(filepath, filename string, filetype modals.Filetype) (Media, error) {
+func (sr *DBService) CreateMedia(filepath, filename string, thumb uint64, filetype modals.Filetype) (Media, error) {
 	switch filetype {
 	case modals.PhotoType:
-		return sr.CreatePhoto(filepath, filename, 0), nil
+		return sr.CreatePhoto(filepath, filename, thumb), nil
 	case modals.StickerType:
-		return sr.CreateSticker(filepath, filename), nil
+		return sr.CreateSticker(filepath, filename, ""), nil
 	case modals.VideoType:
-		return sr.CreateVideo(filepath, filename, 0), nil
+		return sr.CreateVideo(filepath, filename, thumb), nil
 	case modals.AudioType:
-		return sr.CreateAudio(filepath, filename, 0), nil
+		return sr.CreateAudio(filepath, filename, thumb), nil
 	case modals.DocumentType:
-		return sr.CreateDocument(filepath, filename, 0), nil
+		return sr.CreateDocument(filepath, filename, thumb), nil
 	case modals.AnimationType:
-		return sr.CreateAnimation(filepath, filename, 0), nil
+		return sr.CreateAnimation(filepath, filename, thumb), nil
 	default:
 		return nil, nil
 	}

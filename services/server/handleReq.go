@@ -16,7 +16,7 @@ type Req struct {
 	//Forward *msgService.ForwardQuery  `json:"forward"`
 }
 
-func (dvs *DvService) HandleReq(p []byte, c *Client) {
+func (dvs *DvService) HandleReq(c Client, p []byte) {
 	fmt.Println("handling request", string(p))
 	req := &Req{}
 	err := json.Unmarshal(p, req)
@@ -25,20 +25,15 @@ func (dvs *DvService) HandleReq(p []byte, c *Client) {
 		return
 	}
 
-	if req.Message != nil {
+	switch {
+	case req.Message != nil:
 		fmt.Println("message received", req.Message.Text)
-		DVSr.HandleMess(req.Message, c)
-	}
-
-	if req.NewChat != nil {
-		c.HandleNewChat(req.NewChat)
-	}
-
-	if req.ChatJoin != nil {
-		c.HandleAddToChat(req.ChatJoin)
-	}
-
-	if req.GetUser != 0 {
+		DVSr.HandleMess(c, req.Message)
+	case req.NewChat != nil:
+		HandleNewChat(req.NewChat, c)
+	case req.ChatJoin != nil:
+		HandleAddToChat(c, req.ChatJoin)
+	case req.GetUser != 0:
 		user, err := dbService.DBSr.GetUser(req.GetUser)
 		if err != nil {
 			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding user: %v", err))

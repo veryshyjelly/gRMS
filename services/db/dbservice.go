@@ -32,7 +32,7 @@ type DBS interface { // DBService is the interface for all the database services
 	GetSticker(stickerID uint64) (Media, error)
 	CreateAnimation(filepath, filename string, thumb uint64) Media
 	GetAnimation(animId uint64) (Media, error)
-	CreateMedia(filepath, filename string, filetype modals.Filetype) (Media, error)
+	CreateMedia(filepath, filename string, thumb uint64, filetype modals.Filetype) (Media, error)
 	GetMedia(mediaID uint64, filetype modals.Filetype) (Media, error)
 	CreateMessage(chatID uint64, userID uint64) (*modals.Message, error)
 	GetMessage(messageID, chatID uint64) (*modals.Message, error)

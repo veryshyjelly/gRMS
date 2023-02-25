@@ -13,8 +13,8 @@ type NewChatQuery struct {
 }
 
 // HandleNewChat creates a new chat and starts a new channel to handle it
-func (c *Client) HandleNewChat(chatQuery *NewChatQuery) {
-	users := []uint64{c.user.ID}
+func HandleNewChat(chatQuery *NewChatQuery, c Client) {
+	users := []uint64{c.GetUserID()}
 	// Check if the participants are valid
 	if chatQuery.Participants == nil {
 		c.Updates() <- modals.ErrorUpdate("error: participants list not present")
@@ -55,7 +55,7 @@ func HandleAllJoin(chat *modals.Chat) {
 		for _, parti := range chat.Members {
 			if client, ok := DVSr.ActiveUsers()[parti.UserID]; ok {
 				client.ChatJoin() <- chat.ID
-				channel.Join <- client
+				channel.UserJoin() <- client
 				client.Updates() <- &modals.Update{NewChatCreated: chat}
 			} else {
 				fmt.Println("user not active", parti.UserID)

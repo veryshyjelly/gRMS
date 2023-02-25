@@ -3,40 +3,46 @@ package server
 import (
 	"chat-app/modals"
 	"fmt"
-	"sync"
 )
 
-type Channel struct {
+type Channel interface {
+	GetChatID() uint64
+	UserJoin() chan Client
+	UserLeave() chan Client
+	Message() chan *modals.Message
+	Run()
+}
+
+type channel struct {
 	// ChatID is the id of the chat
 	ChatID uint64
 	// Users is the map of all the users in the channel
-	Users map[*Client]bool
-	// Mess is the channel to send messages to all the users
+	Users map[Client]bool
+	// Mess is the channel to send messages to all the users in the chat
 	Mess chan *modals.Message
 	// Join is the chan to add a new user to the channel
-	Join chan *Client
+	Join chan Client
 	// Leave is the chan to remove a user from the channel
-	Leave chan *Client
-	//
-	mu sync.Mutex
+	Leave chan Client
 }
 
-func NewChannel(chatID uint64, user *Client) *Channel {
-	return &Channel{
+func NewChannel(chatID uint64, user Client) Channel {
+	return &channel{
 		ChatID: chatID,
-		Users:  map[*Client]bool{user: true},
+		Users:  map[Client]bool{user: true},
 		Mess:   make(chan *modals.Message),
-		Join:   make(chan *Client),
-		Leave:  make(chan *Client),
+		Join:   make(chan Client),
+		Leave:  make(chan Client),
 	}
 }
 
 // Run is the main function of the channel
 // that listens to the Join, Leave and Mess requests
-func (c *Channel) Run() {
+func (c *channel) Run() {
 	fmt.Println("channel started", c.ChatID)
 	defer func() {
 		fmt.Println("channel stopped", c.ChatID)
+		DVSr.LockChannels()
 		DVSr.StopChannel() <- c.ChatID
 	}()
 
@@ -57,4 +63,22 @@ func (c *Channel) Run() {
 			}
 		}
 	}
+}
+
+// Message returns the channel to send messages to the chat
+func (c *channel) Message() chan *modals.Message {
+	return c.Mess
+}
+
+// GetChatID returns the chat id of the current channel
+func (c *channel) GetChatID() uint64 {
+	return c.ChatID
+}
+
+func (c *channel) UserJoin() chan Client {
+	return c.Join
+}
+
+func (c *channel) UserLeave() chan Client {
+	return c.Leave
 }

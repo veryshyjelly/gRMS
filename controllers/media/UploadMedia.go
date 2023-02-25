@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+// UploadMedia handler handles the upload of the file,
+// saves it and returns the corresponding file id to the user
 func UploadMedia(c *fiber.Ctx) error {
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -15,8 +17,8 @@ func UploadMedia(c *fiber.Ctx) error {
 		})
 	}
 
-	fileType := c.FormValue("type")
-	if !(fileType == "photo" || fileType == "video" || fileType == "document" || fileType == "audio" || fileType == "sticker") {
+	fileType, err := dbservice.GetFileType(c.FormValue("type"))
+	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "invalid file type",
 		})
@@ -45,7 +47,7 @@ func UploadMedia(c *fiber.Ctx) error {
 
 	thumbID, err := strconv.ParseUint(c.FormValue("thumbId", "0"), 10, 64)
 
-	filepath := "./database/" + fileType + "/" + upFile.Filename
+	filepath := "./database/" + c.FormValue("type") + "/" + upFile.Filename
 	filename := upFile.Filename
 
 	err = os.WriteFile(filepath, fileBytes, 0644)
@@ -55,40 +57,9 @@ func UploadMedia(c *fiber.Ctx) error {
 		})
 	}
 
-	switch fileType {
-	case "photo":
-		ph := dbservice.DBSr.CreatePhoto(filepath, filename, thumbID)
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message": "photo uploaded successfully",
-			"photo":   ph,
-		})
-	case "video":
-		vd := dbservice.DBSr.CreateVideo(filepath, filename, thumbID)
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message": "video uploaded successfully",
-			"video":   vd,
-		})
-	case "document":
-		dc := dbservice.DBSr.CreateDocument(filepath, filename, thumbID)
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message":  "document uploaded successfully",
-			"document": dc,
-		})
-	case "audio":
-		ad := dbservice.DBSr.CreateAudio(filepath, filename, thumbID)
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message": "audio uploaded successfully",
-			"audio":   ad,
-		})
-	case "sticker":
-		st := dbservice.DBSr.CreateSticker(filepath, filename, c.FormValue("emoji"))
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"message": "sticker uploaded successfully",
-			"sticker": st,
-		})
-	default:
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "invalid file type",
-		})
-	}
+	med, err := dbservice.DBSr.CreateMedia(filepath, filename, thumbID, fileType)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "file uploaded successfully",
+		"media":   med,
+	})
 }

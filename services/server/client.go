@@ -3,27 +3,36 @@ package server
 import (
 	"chat-app/modals"
 	"github.com/gofiber/websocket/v2"
-	"sync"
 )
 
-type Client struct {
+type Client interface {
+	GetChats() map[uint64]bool
+	GetUserID() uint64
+	GetUsername() string
+	ChatJoin() chan uint64
+	Updates() chan *modals.Update
+	SyncHistory()
+	Read()
+	Listen()
+}
+
+type client struct {
 	UpdateID   uint64
-	user       *modals.User
-	chats      map[uint64]bool
+	User       *modals.User
+	Chats      map[uint64]bool
 	updates    chan *modals.Update
-	join       chan uint64
+	Join       chan uint64
 	Connection *websocket.Conn
-	mu         sync.Mutex
 }
 
 // NewClient function creates a new client
-func NewClient(user *modals.User, connection *websocket.Conn) *Client {
-	client := &Client{
-		user:       user,
+func NewClient(user *modals.User, connection *websocket.Conn) Client {
+	client := &client{
+		User:       user,
 		Connection: connection,
 		updates:    make(chan *modals.Update),
-		join:       make(chan uint64),
-		chats:      user.GetChats(),
+		Join:       make(chan uint64),
+		Chats:      user.GetChats(),
 	}
 
 	DVSr.LockUsers()
@@ -31,10 +40,10 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 	DVSr.AddUser() <- client
 
 	// Loop through all the chats of the user
-	for chatID := range client.chats {
+	for chatID := range client.Chats {
 		// If the channel is active then add the user to active users
 		if channel, ok := DVSr.ActiveChannels()[chatID]; ok {
-			channel.Join <- client
+			channel.UserJoin() <- client
 		} else {
 			channel := NewChannel(chatID, client)
 			go channel.Run()
@@ -48,22 +57,24 @@ func NewClient(user *modals.User, connection *websocket.Conn) *Client {
 }
 
 // GetChats returns the chats of the user
-func (c *Client) GetChats() map[uint64]bool {
-	return c.chats
+func (c *client) GetChats() map[uint64]bool {
+	return c.Chats
 }
 
-func (c *Client) GetUserID() uint64 {
-	return c.user.ID
+// GetUserID returns the user id of the respective client
+func (c *client) GetUserID() uint64 {
+	return c.User.ID
 }
 
-func (c *Client) GetUsername() string {
-	return c.user.Username
+// GetUsername returns the username of the client
+func (c *client) GetUsername() string {
+	return c.User.Username
 }
 
-func (c *Client) ChatJoin() chan uint64 {
-	return c.join
+func (c *client) ChatJoin() chan uint64 {
+	return c.Join
 }
 
-func (c *Client) Updates() chan *modals.Update {
+func (c *client) Updates() chan *modals.Update {
 	return c.updates
 }
