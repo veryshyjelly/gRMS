@@ -2,6 +2,7 @@ package server
 
 import (
 	"chat-app/modals"
+	dbservice "chat-app/services/db"
 	msgService "chat-app/services/msg"
 	"fmt"
 	"sync"
@@ -28,6 +29,7 @@ type DVS interface {
 
 type DvService struct {
 	Mgs        msgService.MsgS
+	Dbs        dbservice.DBS
 	Channels   map[uint64]Channel
 	Users      map[uint64]Client
 	NewChannel chan Channel
@@ -38,9 +40,10 @@ type DvService struct {
 	muChannel  sync.Mutex
 }
 
-func NewDvService(mgs msgService.MsgS) *DvService {
+func NewDvService(mgs msgService.MsgS, dbs dbservice.DBS) *DvService {
 	return &DvService{
 		Mgs:        mgs,
+		Dbs:        dbs,
 		Channels:   make(map[uint64]Channel),
 		Users:      make(map[uint64]Client),
 		NewChannel: make(chan Channel),
@@ -58,11 +61,11 @@ func (dvs *DvService) Run() {
 		case ch := <-dvs.NewChannel:
 			fmt.Println("new channel active", ch)
 			dvs.Channels[ch.GetChatID()] = ch
-			DVSr.UnlockChannels()
+			dvs.UnlockChannels()
 		case cl := <-dvs.NewUser:
 			fmt.Println("new user active", cl.GetUsername())
 			dvs.Users[cl.GetUserID()] = cl
-			DVSr.UnlockUsers()
+			dvs.UnlockUsers()
 		case chatID := <-dvs.EndChannel:
 			fmt.Println("stopping chanel", chatID)
 			delete(dvs.Channels, chatID)

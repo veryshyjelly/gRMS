@@ -2,7 +2,6 @@ package server
 
 import (
 	"chat-app/modals"
-	dbService "chat-app/services/db"
 	"encoding/json"
 	"fmt"
 )
@@ -28,13 +27,13 @@ func (dvs *DvService) HandleReq(c Client, p []byte) {
 	switch {
 	case req.Message != nil:
 		fmt.Println("message received", req.Message.Text)
-		DVSr.HandleMess(c, req.Message)
+		dvs.HandleMess(c, req.Message)
 	case req.NewChat != nil:
 		HandleNewChat(req.NewChat, c)
 	case req.ChatJoin != nil:
 		HandleAddToChat(c, req.ChatJoin)
 	case req.GetUser != 0:
-		user, err := dbService.DBSr.GetUser(req.GetUser)
+		user, err := dvs.Dbs.GetUser(req.GetUser)
 		if err != nil {
 			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding user: %v", err))
 		} else {

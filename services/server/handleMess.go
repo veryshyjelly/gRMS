@@ -31,14 +31,14 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 
 	switch {
 	case m.Text != "":
-		msg, err = msgService.MGSr.Text(&msgService.TextQuery{
+		msg, err = dvs.Mgs.Text(&msgService.TextQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			Text:             m.Text,
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Document != 0:
-		msg, err = msgService.MGSr.Document(&msgService.DocumentQuery{
+		msg, err = dvs.Mgs.Document(&msgService.DocumentQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			DocumentID:       m.Document,
@@ -46,7 +46,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Photo != 0:
-		msg, err = msgService.MGSr.Photo(&msgService.PhotoQuery{
+		msg, err = dvs.Mgs.Photo(&msgService.PhotoQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			PhotoID:          m.Photo,
@@ -54,7 +54,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Audio != 0:
-		msg, err = msgService.MGSr.Audio(&msgService.AudioQuery{
+		msg, err = dvs.Mgs.Audio(&msgService.AudioQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			AudioID:          m.Audio,
@@ -62,7 +62,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Video != 0:
-		msg, err = msgService.MGSr.Video(&msgService.VideoQuery{
+		msg, err = dvs.Mgs.Video(&msgService.VideoQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			VideoID:          m.Video,
