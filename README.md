@@ -17,7 +17,7 @@
     <img src="./logo.svg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center"><b>gRMS</b></h3>
 
   <p align="center">
     gRMS is a fully fledged messaging service written in golang
