@@ -27,15 +27,15 @@ type Audio struct {
 	DeletedAt time.Time `json:"-" gorm:"index"`
 }
 
-func (au Audio) GetType() Filetype {
+func (au *Audio) GetType() Filetype {
 	return AudioType
 }
 
-func (au Audio) GetFileID() uint64 {
+func (au *Audio) GetFileID() uint64 {
 	return au.ID
 }
 
-func (au Audio) GetMetaData() *MediaMD {
+func (au *Audio) GetMetaData() *MediaMD {
 	return &MediaMD{
 		Filename: au.Filename,
 		Filesize: au.Filesize,
@@ -43,6 +43,6 @@ func (au Audio) GetMetaData() *MediaMD {
 	}
 }
 
-func (au Audio) GetFileLinkExpiry() time.Time {
+func (au *Audio) GetFileLinkExpiry() time.Time {
 	return time.Now().Add(time.Hour * 24 * 30)
 }
