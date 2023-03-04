@@ -7,9 +7,6 @@
 [![Issues][issues-shield]][issues-url]
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
-![Lines][num-lines]
-
-[num-lines]: https://img.shields.io/tokei/lines/github/veryshyjelly/gRMS
 
 
 
