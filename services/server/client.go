@@ -1,7 +1,8 @@
 package server
 
 import (
-	"chat-app/modals"
+	"gRMS/modals"
+
 	"github.com/gofiber/websocket/v2"
 )
 

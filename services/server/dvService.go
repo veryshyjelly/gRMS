@@ -1,10 +1,10 @@
 package server
 
 import (
-	"chat-app/modals"
-	dbservice "chat-app/services/db"
-	msgService "chat-app/services/msg"
 	"fmt"
+	"gRMS/modals"
+	dbservice "gRMS/services/db"
+	msgService "gRMS/services/msg"
 	"sync"
 )
 

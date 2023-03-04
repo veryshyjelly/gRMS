@@ -1,7 +1,8 @@
 package dbService
 
 import (
-	"chat-app/modals"
+	"gRMS/modals"
+
 	"gorm.io/gorm"
 )
 

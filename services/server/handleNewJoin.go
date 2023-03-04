@@ -1,9 +1,9 @@
 package server
 
 import (
-	"chat-app/modals"
-	"chat-app/services/db"
 	"fmt"
+	"gRMS/modals"
+	dbService "gRMS/services/db"
 	"log"
 )
 

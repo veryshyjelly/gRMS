@@ -1,6 +1,6 @@
 package dbService
 
-import "chat-app/modals"
+import "gRMS/modals"
 
 // AddMember creates a member relation of the user with the chat
 func (sr *DBService) AddMember(chatID uint64, userID uint64) (*modals.Participant, error) {

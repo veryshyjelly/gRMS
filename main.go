@@ -1,12 +1,13 @@
 package main
 
 import (
-	"chat-app/database"
-	"chat-app/routes"
-	"chat-app/services"
+	"gRMS/database"
+	"gRMS/routes"
+	"gRMS/services"
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm/logger"
-	"log"
 )
 
 func main() {

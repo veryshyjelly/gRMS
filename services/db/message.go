@@ -1,8 +1,8 @@
 package dbService
 
 import (
-	"chat-app/modals"
 	"fmt"
+	"gRMS/modals"
 )
 
 // CreateMessage creates a new message populated with Chat and user

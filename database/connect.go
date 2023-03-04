@@ -1,13 +1,14 @@
 package database
 
 import (
-	"chat-app/modals"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+	"gRMS/modals"
 	"log"
 	"os"
 	"time"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var ChatDb *gorm.DB

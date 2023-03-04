@@ -1,8 +1,8 @@
 package server
 
 import (
-	"chat-app/modals"
-	"chat-app/services/db"
+	"gRMS/modals"
+	dbService "gRMS/services/db"
 )
 
 // SyncHistory function sends the chat history to the user

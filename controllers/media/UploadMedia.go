@@ -1,10 +1,11 @@
 package media
 
 import (
-	dbservice "chat-app/services/db"
-	"github.com/gofiber/fiber/v2"
+	dbservice "gRMS/services/db"
 	"os"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // UploadMedia handler handles the upload of the file,

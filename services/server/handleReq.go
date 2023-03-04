@@ -1,9 +1,9 @@
 package server
 
 import (
-	"chat-app/modals"
 	"encoding/json"
 	"fmt"
+	"gRMS/modals"
 )
 
 type Req struct {

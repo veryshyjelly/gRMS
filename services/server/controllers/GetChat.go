@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"chat-app/modals"
+	"gRMS/modals"
 )
 
 func GetChat() (*modals.Chat, error) {

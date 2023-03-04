@@ -1,8 +1,8 @@
 package msgService
 
 import (
-	"chat-app/modals"
-	dbService "chat-app/services/db"
+	"gRMS/modals"
+	dbService "gRMS/services/db"
 )
 
 var MGSr MsgS

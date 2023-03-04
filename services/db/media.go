@@ -1,8 +1,8 @@
 package dbService
 
 import (
-	"chat-app/modals"
 	"fmt"
+	"gRMS/modals"
 	"time"
 )
 

@@ -1,6 +1,6 @@
 package dbService
 
-import "chat-app/modals"
+import "gRMS/modals"
 
 // CreateAnimation to create a new Animation entry
 func (sr *DBService) CreateAnimation(filepath, filename string, thumb uint64) Media {

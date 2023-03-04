@@ -1,8 +1,8 @@
 package msgService
 
 import (
-	"chat-app/modals"
 	"fmt"
+	"gRMS/modals"
 )
 
 // Text creates a new message with text ready to be sent to the chat

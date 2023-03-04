@@ -1,7 +1,8 @@
 package connect
 
 import (
-	dbservice "chat-app/services/db"
+	dbservice "gRMS/services/db"
+
 	"github.com/gofiber/fiber/v2"
 )
 

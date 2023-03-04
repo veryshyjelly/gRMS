@@ -1,4 +1,4 @@
-module chat-app
+module gRMS
 
 go 1.19
 

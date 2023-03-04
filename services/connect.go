@@ -1,10 +1,10 @@
 package services
 
 import (
-	"chat-app/database"
-	"chat-app/services/db"
-	"chat-app/services/msg"
-	"chat-app/services/server"
+	"gRMS/database"
+	dbService "gRMS/services/db"
+	msgService "gRMS/services/msg"
+	"gRMS/services/server"
 )
 
 func Connect() {

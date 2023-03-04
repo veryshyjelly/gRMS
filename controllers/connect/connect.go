@@ -1,12 +1,13 @@
 package connect
 
 import (
-	"chat-app/services/db"
-	"chat-app/services/server"
 	"fmt"
+	dbService "gRMS/services/db"
+	"gRMS/services/server"
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
-	"log"
 )
 
 func ConnClient() fiber.Handler {

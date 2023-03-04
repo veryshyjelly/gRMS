@@ -1,7 +1,8 @@
 package routes
 
 import (
-	"chat-app/controllers/media"
+	"gRMS/controllers/media"
+
 	"github.com/gofiber/fiber/v2"
 )
 

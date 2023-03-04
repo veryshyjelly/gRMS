@@ -1,7 +1,8 @@
 package routes
 
 import (
-	"chat-app/controllers/connect"
+	"gRMS/controllers/connect"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )

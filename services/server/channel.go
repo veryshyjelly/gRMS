@@ -1,8 +1,8 @@
 package server
 
 import (
-	"chat-app/modals"
 	"fmt"
+	"gRMS/modals"
 )
 
 type Channel interface {

@@ -1,8 +1,8 @@
 package dbService
 
 import (
-	"chat-app/modals"
 	"fmt"
+	"gRMS/modals"
 )
 
 // CreateChat creates a new chat and registers in the database
