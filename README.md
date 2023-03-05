@@ -63,7 +63,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-gRMS is a fully fledged messaging service written completely in golang, with the help of gorilla/websockets, go-fiber and mySQL
+gRMS is a fully fledged messaging service written completely in golang, with the help of Go-Fiber and mySQL
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
