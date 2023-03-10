@@ -2,6 +2,7 @@ package connect
 
 import (
 	dbservice "gRMS/services/db"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -12,6 +13,8 @@ func SignUp(c *fiber.Ctx) error {
 	userName := c.FormValue("username")
 	password := c.FormValue("password")
 	email := c.FormValue("email")
+
+	userName = strings.Join(strings.Split(userName, " "), "-")
 
 	user, err := dbservice.DBSr.CreateUser(firstName, lastName, userName, email, password)
 	if err != nil {
