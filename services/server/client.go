@@ -22,6 +22,7 @@ type client struct {
 	User       *modals.User
 	Chats      map[uint64]bool
 	updates    chan *modals.Update
+	history    chan *modals.Update
 	Join       chan uint64
 	Connection *websocket.Conn
 }
