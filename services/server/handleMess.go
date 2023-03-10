@@ -14,6 +14,7 @@ type MessQuery struct {
 	Photo            uint64 `json:"photo,omitempty"`
 	Audio            uint64 `json:"audio,omitempty"`
 	Video            uint64 `json:"video,omitempty"`
+	Animation        uint64 `json:"animation,omitempty"`
 	Thumb            uint64 `json:"thumb,omitempty"`
 	Caption          string `json:"caption,omitempty"`
 	ReplyToMessageID uint64 `json:"reply_to_message_id,omitempty"`
@@ -66,6 +67,14 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			VideoID:          m.Video,
+			Caption:          m.Caption,
+			ReplyToMessageID: m.ReplyToMessageID,
+		})
+	case m.Animation != 0:
+		msg, err = dvs.Mgs.Animation(&msgService.AnimationQuery{
+			From:             c.GetUserID(),
+			ChatID:           m.ChatID,
+			AnimationID:      m.Animation,
 			Caption:          m.Caption,
 			ReplyToMessageID: m.ReplyToMessageID,
 		})

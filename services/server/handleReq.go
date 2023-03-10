@@ -7,11 +7,13 @@ import (
 )
 
 type Req struct {
-	Message  *MessQuery    `json:"message"`
-	NewChat  *NewChatQuery `json:"new_chat"`
-	ChatJoin *AddUserQuery `json:"add_user"`
-	GetUser  uint64        `json:"get_user"`
-	GetChat  uint64        `json:"get_chat"`
+	Message   *MessQuery    `json:"message"`
+	NewChat   *NewChatQuery `json:"new_chat"`
+	ChatJoin  *UserQuery    `json:"add_user"`
+	ChatKick  *UserQuery    `json:"kick_user"`
+	GetUser   uint64        `json:"get_user"`
+	GetChat   uint64        `json:"get_chat"`
+	LeaveChat uint64        `json:"leave_chat"`
 	//Forward *msgService.ForwardQuery  `json:"forward"`
 }
 
@@ -38,6 +40,13 @@ func (dvs *DvService) HandleReq(c Client, p []byte) {
 			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding user: %v", err))
 		} else {
 			c.Updates() <- modals.UserUpdate(user)
+		}
+	case req.GetChat != 0:
+		chat, err := dvs.Dbs.GetChat(req.GetChat)
+		if err != nil {
+			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding chat: %v", err))
+		} else {
+			c.Updates() <- modals.ChatUpdate(chat)
 		}
 	}
 }

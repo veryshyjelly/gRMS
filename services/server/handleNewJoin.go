@@ -7,13 +7,13 @@ import (
 	"log"
 )
 
-type AddUserQuery struct {
+type UserQuery struct {
 	ChatID uint64 `json:"chat_id"`
 	UserID uint64 `json:"user_id"`
 }
 
 // HandleAddToChat adds a user to a chat and sends the chat to the user
-func HandleAddToChat(c Client, query *AddUserQuery) {
+func HandleAddToChat(c Client, query *UserQuery) {
 	chat, err := dbService.DBSr.GetChat(query.ChatID)
 	if err != nil {
 		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding chat: %v", err))
@@ -35,7 +35,7 @@ func HandleAddToChat(c Client, query *AddUserQuery) {
 		p.ChatJoin() <- chat.ID
 		if channel, ok := DVSr.ActiveChannels()[chat.ID]; ok {
 			channel.UserJoin() <- p
-			p.Updates() <- modals.ChatUpdate(chat)
+			p.Updates() <- modals.NewChatUpdate(chat)
 		} else {
 			log.Fatalln("channel not found")
 		}
