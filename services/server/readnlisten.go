@@ -38,10 +38,15 @@ func (c *client) Listen() {
 	defer fmt.Println("stopped listening to client", c.User.ID)
 	for {
 		select {
-		case msg := <-c.updates:
+		case up := <-c.updates:
 			c.UpdateID++
-			msg.ID = c.UpdateID
-			if err := c.Connection.WriteJSON(msg); err != nil {
+			up.ID = c.UpdateID
+			if err := c.Connection.WriteJSON(up); err != nil {
+				log.Println("error while writing message to client", err)
+			}
+		case his := <-c.history:
+			his.ID = 0
+			if err := c.Connection.WriteJSON(his); err != nil {
 				log.Println("error while writing message to client", err)
 			}
 		case chatID := <-c.Join:

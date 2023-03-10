@@ -56,7 +56,7 @@ func HandleAllJoin(chat *modals.Chat) {
 			if client, ok := DVSr.ActiveUsers()[parti.UserID]; ok {
 				client.ChatJoin() <- chat.ID
 				channel.UserJoin() <- client
-				client.Updates() <- &modals.Update{NewChatCreated: chat}
+				client.Updates() <- modals.NewChatUpdate(chat)
 			} else {
 				fmt.Println("user not active", parti.UserID)
 			}

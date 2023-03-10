@@ -2,6 +2,7 @@ package connect
 
 import (
 	"fmt"
+	"gRMS/modals"
 	dbService "gRMS/services/db"
 	"gRMS/services/server"
 	"log"
@@ -17,7 +18,7 @@ func ConnClient() fiber.Handler {
 
 		user, err := dbService.DBSr.FindUser(username)
 		if err != nil || user.Password != password {
-			err := c.WriteJSON(fiber.Map{"message": "Invalid username or password"})
+			err := c.WriteJSON(modals.ErrorUpdate("incorrect username or password"))
 			c.Close()
 			if err != nil {
 				log.Println("error sending error:", err)

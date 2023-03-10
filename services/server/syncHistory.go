@@ -19,6 +19,6 @@ func (c *client) SyncHistory() {
 // SendAllMessages function sends all the messages to the user
 func (c *client) SendAllMessages(mess []*modals.Message) {
 	for _, m := range mess {
-		c.updates <- modals.MessageUpdate(m)
+		c.history <- modals.MessageUpdate(m)
 	}
 }

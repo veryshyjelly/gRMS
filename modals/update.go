@@ -11,6 +11,10 @@ type Update struct {
 	NewChatCreated *Chat `json:"new_chat_created"`
 	// User is the user data requested
 	User *User `json:"user"`
+	// Self is the user data of the client
+	Self *User `json:"self"`
+	// Chat is the chat data requested
+	Chat *Chat `json:"chat"`
 	// Error is the error message
 	Error string `json:"error"`
 }
@@ -23,8 +27,12 @@ func ErrorUpdate(err string) *Update {
 	return &Update{Error: err}
 }
 
-func ChatUpdate(chat *Chat) *Update {
+func NewChatUpdate(chat *Chat) *Update {
 	return &Update{NewChatCreated: chat}
+}
+
+func ChatUpdate(chat *Chat) *Update {
+	return &Update{Chat: chat}
 }
 
 func UserUpdate(user *User) *Update {
