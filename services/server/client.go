@@ -33,6 +33,7 @@ func NewClient(user *modals.User, connection *websocket.Conn) Client {
 		User:       user,
 		Connection: connection,
 		updates:    make(chan *modals.Update),
+		history:    make(chan *modals.Update),
 		Join:       make(chan uint64),
 		Chats:      user.GetChats(),
 	}
