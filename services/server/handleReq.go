@@ -11,6 +11,8 @@ type Req struct {
 	NewChat   *NewChatQuery `json:"new_chat"`
 	ChatJoin  *UserQuery    `json:"add_user"`
 	ChatKick  *UserQuery    `json:"kick_user"`
+	Promote   *UserQuery    `json:"promote"`
+	Demote    *UserQuery    `json:"demote"`
 	GetUser   uint64        `json:"get_user"`
 	GetChat   uint64        `json:"get_chat"`
 	GetSelf   uint64        `json:"get_self"`

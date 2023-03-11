@@ -49,11 +49,11 @@ func (c *channel) Run() {
 	for len(c.Users) > 0 {
 		select {
 		case client := <-c.Join:
-			fmt.Printf("new user %v joined in %v\n", client.GetUsername(), c.ChatID)
+			// fmt.Printf("new user %v joined in %v\n", client.GetUsername(), c.ChatID)
 			c.Users[client] = true
 
 		case client := <-c.Leave:
-			fmt.Println("user left", client.GetUsername())
+			// fmt.Println("user left", client.GetUsername())
 			delete(c.Users, client)
 
 		case msg := <-c.Mess:
