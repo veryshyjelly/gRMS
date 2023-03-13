@@ -2,12 +2,14 @@ package routes
 
 import (
 	"gRMS/controllers/connect"
+	dbService "gRMS/services/db"
+	"gRMS/services/server"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/websocket/v2"
 )
 
-func Connect(app *fiber.App) {
+func Connect(app *fiber.App, dbs dbService.DBS, dvs server.DVS) {
 	// This function registers the connection and the signup
 	// routes for the application
 	app.Use("/ws", func(c *fiber.Ctx) error {
@@ -18,10 +20,11 @@ func Connect(app *fiber.App) {
 		return fiber.ErrUpgradeRequired
 	})
 
-	app.Get("/ws", connect.ConnClient())
+	app.Get("/ws", connect.ConnClient(dvs, dbs))
 
 	app.Get("/signup", func(c *fiber.Ctx) error {
 		return c.SendFile("./views/signup.html")
 	})
-	app.Post("/signup", connect.SignUp)
+
+	app.Post("/signup", connect.SignUp(dbs))
 }

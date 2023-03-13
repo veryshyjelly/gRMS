@@ -1,5 +1,0 @@
-package user
-
-func DeleteProfilePhoto() {
-
-}

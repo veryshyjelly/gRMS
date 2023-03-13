@@ -1,5 +1,0 @@
-package user
-
-func GetUserProfilePhoto() {
-
-}

@@ -3,7 +3,7 @@ package dbService
 import "gRMS/modals"
 
 // NewFile function should be used by the getFile method to get the downloadable file path
-func (sr *DBService) NewFile(fileId uint64, filetype modals.Filetype) (*modals.File, error) {
+func (sr *dbs) NewFile(fileId uint64, filetype modals.Filetype) (*modals.File, error) {
 	file := modals.File{ID: fileId, Filetype: filetype}
 
 	switch filetype {

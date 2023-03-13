@@ -3,7 +3,6 @@ package server
 import (
 	"fmt"
 	"gRMS/modals"
-	dbService "gRMS/services/db"
 	"log"
 )
 
@@ -13,8 +12,8 @@ type UserQuery struct {
 }
 
 // HandleAddToChat adds a user to a chat and sends the chat to the user
-func HandleAddToChat(c Client, query *UserQuery) {
-	chat, err := dbService.DBSr.GetChat(query.ChatID)
+func (sr *dvs) HandleAddToChat(c Client, query *UserQuery) {
+	chat, err := sr.getChat(query.ChatID)
 	if err != nil {
 		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding chat: %v", err))
 		return
@@ -26,15 +25,15 @@ func HandleAddToChat(c Client, query *UserQuery) {
 	}
 
 	for _, user := range query.Users {
-		if u, err := dbService.DBSr.FindUser(user); err != nil {
+		if u, err := sr.findUser(user); err != nil {
 			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("user not found: %v", user))
 		} else {
-			if _, err = dbService.DBSr.AddMember(chat.ID, u.ID); err != nil {
+			if _, err = sr.addMember(chat.ID, u.ID); err != nil {
 				c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error adding user to chat: %v", err))
 			} else {
-				if p, ok := DVSr.ActiveUsers()[u.ID]; ok {
+				if p, ok := sr.ActiveUsers()[u.ID]; ok {
 					p.ChatJoin() <- chat.ID
-					if channel, ok := DVSr.ActiveChannels()[chat.ID]; ok {
+					if channel, ok := sr.ActiveChannels()[chat.ID]; ok {
 						channel.UserJoin() <- p
 						p.Updates() <- modals.NewChatUpdate(chat)
 					} else {
@@ -44,5 +43,4 @@ func HandleAddToChat(c Client, query *UserQuery) {
 			}
 		}
 	}
-
 }

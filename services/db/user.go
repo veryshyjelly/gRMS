@@ -3,10 +3,24 @@ package dbService
 import (
 	"fmt"
 	"gRMS/modals"
+	"strings"
 )
 
 // CreateUser function to create a new user entry
-func (sr *DBService) CreateUser(firstName, lastName, username, email, password string) (*modals.User, error) {
+func (sr *dbs) CreateUser(firstName, lastName, username, email, password string) (*modals.User, error) {
+	if len(firstName) < 2 {
+		return nil, fmt.Errorf("invalid name provided")
+	}
+	if len(email) < 4 && !strings.Contains(email, "@") {
+		return nil, fmt.Errorf("invalid email provided")
+	}
+	if len(username) < 4 {
+		return nil, fmt.Errorf("length of username cannot be less than 4")
+	}
+	if len(password) < 5 {
+		return nil, fmt.Errorf("length of password cannot be less than 5")
+	}
+
 	user := modals.User{}
 	sr.db.First(&user, "email = ?", email)
 	if user.GetEmail() != "" {
@@ -26,19 +40,13 @@ func (sr *DBService) CreateUser(firstName, lastName, username, email, password s
 		Chats:     make([]modals.Participant, 0),
 	}
 
-	//validate := validator.Validate{}
-	//err := validate.Struct(user)
-	//if err != nil {
-	//	return nil, fmt.Errorf("invalid user data: %v", err)
-	//}
-
 	sr.db.Create(&user)
 
 	return &user, nil
 }
 
 // GetUser is used to find user by id
-func (sr *DBService) GetUser(userID uint64) (*modals.User, error) {
+func (sr *dbs) GetUser(userID uint64) (*modals.User, error) {
 	user := modals.User{}
 
 	sr.db.Preload("Chats").First(&user, "id = ?", userID)
@@ -49,7 +57,7 @@ func (sr *DBService) GetUser(userID uint64) (*modals.User, error) {
 	return &user, nil
 }
 
-func (sr *DBService) FindUser(username string) (*modals.User, error) {
+func (sr *dbs) FindUser(username string) (*modals.User, error) {
 	user := modals.User{}
 
 	sr.db.Preload("Chats").First(&user, "username = ?", username)
@@ -60,12 +68,12 @@ func (sr *DBService) FindUser(username string) (*modals.User, error) {
 	return &user, nil
 }
 
-func (sr *DBService) UpdateUser(user *modals.User) error {
+func (sr *dbs) UpdateUser(user *modals.User) error {
 	// TODO implement this function
 	return nil
 }
 
-func (sr *DBService) DeleteUser(userID uint64) error {
+func (sr *dbs) DeleteUser(userID uint64) error {
 	// TODO implement this function
 	return nil
 }

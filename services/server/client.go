@@ -2,6 +2,7 @@ package server
 
 import (
 	"gRMS/modals"
+	dbservice "gRMS/services/db"
 
 	"github.com/gofiber/websocket/v2"
 )
@@ -12,8 +13,8 @@ type Client interface {
 	GetUsername() string
 	ChatJoin() chan uint64
 	Updates() chan *modals.Update
-	SyncHistory()
-	Read()
+	SyncHistory(dbs dbservice.DBS)
+	Read(dvs DVS)
 	Listen()
 }
 
@@ -28,7 +29,7 @@ type client struct {
 }
 
 // NewClient function creates a new client
-func NewClient(user *modals.User, connection *websocket.Conn) Client {
+func (sr *dvs) NewClient(user *modals.User, connection *websocket.Conn) Client {
 	client := &client{
 		User:       user,
 		Connection: connection,
@@ -38,21 +39,21 @@ func NewClient(user *modals.User, connection *websocket.Conn) Client {
 		Chats:      user.GetChats(),
 	}
 
-	DVSr.LockUsers()
+	sr.LockUsers()
 	// Add the client to delivery service
-	DVSr.AddUser() <- client
+	sr.AddUser() <- client
 
 	// Loop through all the chats of the user
 	for chatID := range client.Chats {
 		// If the channel is active then add the user to active users
-		if channel, ok := DVSr.ActiveChannels()[chatID]; ok {
+		if channel, ok := sr.ActiveChannels()[chatID]; ok {
 			channel.UserJoin() <- client
 		} else {
 			channel := NewChannel(chatID, client)
-			go channel.Run()
+			go channel.Run(sr)
 
-			DVSr.LockChannels()
-			DVSr.AddChannel() <- channel
+			sr.LockChannels()
+			sr.AddChannel() <- channel
 		}
 	}
 

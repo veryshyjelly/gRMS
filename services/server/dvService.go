@@ -5,10 +5,9 @@ import (
 	"gRMS/modals"
 	dbservice "gRMS/services/db"
 	msgService "gRMS/services/msg"
+	"github.com/gofiber/websocket/v2"
 	"sync"
 )
-
-var DVSr DVS
 
 type DVS interface {
 	SendMess(*modals.Message)
@@ -25,9 +24,10 @@ type DVS interface {
 	UnlockUsers()
 	LockChannels()
 	UnlockChannels()
+	NewClient(*modals.User, *websocket.Conn) Client
 }
 
-type DvService struct {
+type dvs struct {
 	Mgs        msgService.MsgS
 	Dbs        dbservice.DBS
 	Channels   map[uint64]Channel
@@ -40,8 +40,8 @@ type DvService struct {
 	muChannel  sync.Mutex
 }
 
-func NewDvService(mgs msgService.MsgS, dbs dbservice.DBS) *DvService {
-	return &DvService{
+func NewDvService(mgs msgService.MsgS, dbs dbservice.DBS) DVS {
+	return &dvs{
 		Mgs:        mgs,
 		Dbs:        dbs,
 		Channels:   make(map[uint64]Channel),
@@ -53,71 +53,67 @@ func NewDvService(mgs msgService.MsgS, dbs dbservice.DBS) *DvService {
 	}
 }
 
-func (dvs *DvService) Run() {
+func (sr *dvs) Run() {
 	fmt.Println("starting dv service")
 	defer fmt.Println("stopping dv service")
 	for {
 		select {
-		case ch := <-dvs.NewChannel:
+		case ch := <-sr.NewChannel:
 			fmt.Println("new channel active", ch)
-			dvs.Channels[ch.GetChatID()] = ch
-			dvs.UnlockChannels()
-		case cl := <-dvs.NewUser:
+			sr.Channels[ch.GetChatID()] = ch
+			sr.UnlockChannels()
+		case cl := <-sr.NewUser:
 			fmt.Println("new user active", cl.GetUsername())
-			dvs.Users[cl.GetUserID()] = cl
-			dvs.UnlockUsers()
-		case chatID := <-dvs.EndChannel:
+			sr.Users[cl.GetUserID()] = cl
+			sr.UnlockUsers()
+		case chatID := <-sr.EndChannel:
 			fmt.Println("stopping chanel", chatID)
-			delete(dvs.Channels, chatID)
-			dvs.UnlockChannels()
-		case userID := <-dvs.UserLeft:
+			delete(sr.Channels, chatID)
+			sr.UnlockChannels()
+		case userID := <-sr.UserLeft:
 			fmt.Println("user left", userID)
-			delete(dvs.Users, userID)
-			dvs.UnlockUsers()
+			delete(sr.Users, userID)
+			sr.UnlockUsers()
 		}
 	}
 }
 
-func (dvs *DvService) AddChannel() chan Channel {
-	return dvs.NewChannel
+func (sr *dvs) AddChannel() chan Channel {
+	return sr.NewChannel
 }
 
-func (dvs *DvService) ActiveChannels() map[uint64]Channel {
-	return dvs.Channels
+func (sr *dvs) ActiveChannels() map[uint64]Channel {
+	return sr.Channels
 }
 
-func (dvs *DvService) StopChannel() chan uint64 {
-	return dvs.EndChannel
+func (sr *dvs) StopChannel() chan uint64 {
+	return sr.EndChannel
 }
 
-func (dvs *DvService) AddUser() chan Client {
-	return dvs.NewUser
+func (sr *dvs) AddUser() chan Client {
+	return sr.NewUser
 }
 
-func (dvs *DvService) ActiveUsers() map[uint64]Client {
-	return dvs.Users
+func (sr *dvs) ActiveUsers() map[uint64]Client {
+	return sr.Users
 }
 
-func (dvs *DvService) LeaveUser() chan uint64 {
-	return dvs.UserLeft
+func (sr *dvs) LeaveUser() chan uint64 {
+	return sr.UserLeft
 }
 
-func (dvs *DvService) LockUsers() {
-	fmt.Println("locking users")
-	dvs.muUser.Lock()
+func (sr *dvs) LockUsers() {
+	sr.muUser.Lock()
 }
 
-func (dvs *DvService) UnlockUsers() {
-	fmt.Println("unlocking users")
-	dvs.muUser.Unlock()
+func (sr *dvs) UnlockUsers() {
+	sr.muUser.Unlock()
 }
 
-func (dvs *DvService) LockChannels() {
-	fmt.Println("locking channel")
-	dvs.muChannel.Lock()
+func (sr *dvs) LockChannels() {
+	sr.muChannel.Lock()
 }
 
-func (dvs *DvService) UnlockChannels() {
-	fmt.Println("unlocking channel")
-	dvs.muChannel.Unlock()
+func (sr *dvs) UnlockChannels() {
+	sr.muChannel.Unlock()
 }

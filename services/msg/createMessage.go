@@ -6,7 +6,7 @@ import (
 )
 
 // Text creates a new message with text ready to be sent to the chat
-func (ms *MsgService) Text(query *TextQuery) (*modals.Message, error) {
+func (ms *mgs) Text(query *TextQuery) (*modals.Message, error) {
 	msg, err := ms.dbs.CreateMessage(query.ChatID, query.From)
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func (ms *MsgService) Text(query *TextQuery) (*modals.Message, error) {
 }
 
 // Photo creates a new message with photo ready to be sent to the chat
-func (ms *MsgService) Photo(query *PhotoQuery) (*modals.Message, error) {
+func (ms *mgs) Photo(query *PhotoQuery) (*modals.Message, error) {
 	ph, err := ms.dbs.GetPhoto(query.PhotoID)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (ms *MsgService) Photo(query *PhotoQuery) (*modals.Message, error) {
 }
 
 // Video creates a new message with video ready to be sent to the chat
-func (ms *MsgService) Video(query *VideoQuery) (*modals.Message, error) {
+func (ms *mgs) Video(query *VideoQuery) (*modals.Message, error) {
 	vid, err := ms.dbs.GetVideo(query.VideoID)
 	if err != nil {
 		return nil, err
@@ -67,7 +67,7 @@ func (ms *MsgService) Video(query *VideoQuery) (*modals.Message, error) {
 }
 
 // Animation creates a new message with animation ready to be sent to the chat
-func (ms *MsgService) Animation(query *AnimationQuery) (*modals.Message, error) {
+func (ms *mgs) Animation(query *AnimationQuery) (*modals.Message, error) {
 	anim, err := ms.dbs.GetAnimation(query.AnimationID)
 	if err != nil {
 		return nil, err
@@ -89,7 +89,7 @@ func (ms *MsgService) Animation(query *AnimationQuery) (*modals.Message, error) 
 }
 
 // Audio creates a new message with audio ready to be sent to the chat
-func (ms *MsgService) Audio(query *AudioQuery) (*modals.Message, error) {
+func (ms *mgs) Audio(query *AudioQuery) (*modals.Message, error) {
 	audio, err := ms.dbs.GetAudio(query.AudioID)
 	if err != nil {
 		return nil, err
@@ -111,7 +111,7 @@ func (ms *MsgService) Audio(query *AudioQuery) (*modals.Message, error) {
 }
 
 // Sticker creates a new message with video ready to be sent to the chat
-func (ms *MsgService) Sticker(query *StickerQuery) (*modals.Message, error) {
+func (ms *mgs) Sticker(query *StickerQuery) (*modals.Message, error) {
 	stk, err := ms.dbs.GetSticker(query.StickerID)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,7 @@ func (ms *MsgService) Sticker(query *StickerQuery) (*modals.Message, error) {
 }
 
 // Document creates a new message with document ready to be sent to the chat
-func (ms *MsgService) Document(query *DocumentQuery) (*modals.Message, error) {
+func (ms *mgs) Document(query *DocumentQuery) (*modals.Message, error) {
 	doc, err := ms.dbs.GetDocument(query.DocumentID)
 	if err != nil {
 		return nil, err

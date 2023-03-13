@@ -6,11 +6,11 @@ import (
 )
 
 // SyncHistory function sends the chat history to the user
-func (c *client) SyncHistory() {
+func (c *client) SyncHistory(dbs dbService.DBS) {
 	// Iterate on all the chats that the user has
 	for chatID := range c.GetChats() {
 		// Get all the messages in the chat
-		messages := dbService.DBSr.GetAllMessages(chatID)
+		messages := dbs.GetAllMessages(chatID)
 		// then concurrently send them to the user
 		go c.SendAllMessages(messages)
 	}

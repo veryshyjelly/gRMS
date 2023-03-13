@@ -21,25 +21,25 @@ type MessQuery struct {
 }
 
 // HandleMess handles the message query
-func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
+func (sr *dvs) HandleMess(c Client, m *MessQuery) {
 	var msg *modals.Message
 	var err error
 
-	if _, ok := dvs.ActiveUsers()[c.GetUserID()].GetChats()[m.ChatID]; !ok {
+	if _, ok := sr.ActiveUsers()[c.GetUserID()].GetChats()[m.ChatID]; !ok {
 		c.Updates() <- modals.ErrorUpdate("you are not a member of this chat")
 		return
 	}
 
 	switch {
 	case m.Text != "":
-		msg, err = dvs.Mgs.Text(&msgService.TextQuery{
+		msg, err = sr.Mgs.Text(&msgService.TextQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			Text:             m.Text,
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Document != 0:
-		msg, err = dvs.Mgs.Document(&msgService.DocumentQuery{
+		msg, err = sr.Mgs.Document(&msgService.DocumentQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			DocumentID:       m.Document,
@@ -47,7 +47,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Photo != 0:
-		msg, err = dvs.Mgs.Photo(&msgService.PhotoQuery{
+		msg, err = sr.Mgs.Photo(&msgService.PhotoQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			PhotoID:          m.Photo,
@@ -55,7 +55,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Audio != 0:
-		msg, err = dvs.Mgs.Audio(&msgService.AudioQuery{
+		msg, err = sr.Mgs.Audio(&msgService.AudioQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			AudioID:          m.Audio,
@@ -63,7 +63,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Video != 0:
-		msg, err = dvs.Mgs.Video(&msgService.VideoQuery{
+		msg, err = sr.Mgs.Video(&msgService.VideoQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			VideoID:          m.Video,
@@ -71,7 +71,7 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 			ReplyToMessageID: m.ReplyToMessageID,
 		})
 	case m.Animation != 0:
-		msg, err = dvs.Mgs.Animation(&msgService.AnimationQuery{
+		msg, err = sr.Mgs.Animation(&msgService.AnimationQuery{
 			From:             c.GetUserID(),
 			ChatID:           m.ChatID,
 			AnimationID:      m.Animation,
@@ -86,13 +86,13 @@ func (dvs *DvService) HandleMess(c Client, m *MessQuery) {
 		e := fmt.Sprintf("error while processing message: %v", err)
 		msg = &modals.Message{Text: &e}
 	} else {
-		dvs.SendMess(msg)
+		sr.SendMess(msg)
 	}
 }
 
-func (dvs *DvService) SendMess(msg *modals.Message) {
+func (sr *dvs) SendMess(msg *modals.Message) {
 	// This function sends the message where it needs to go
-	if channel, ok := dvs.ActiveChannels()[msg.Chat]; ok {
+	if channel, ok := sr.ActiveChannels()[msg.Chat]; ok {
 		channel.Message() <- msg
 	} else {
 		log.Println("error channel not found")

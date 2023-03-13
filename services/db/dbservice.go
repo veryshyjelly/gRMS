@@ -6,8 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var DBSr DBS
-
 type DBS interface { // DBService is the interface for all the database services
 	CreateUser(firstName, lastName, username, email, password string) (*modals.User, error)
 	GetUser(userID uint64) (*modals.User, error)
@@ -41,10 +39,10 @@ type DBS interface { // DBService is the interface for all the database services
 	InsertMessage(message *modals.Message) error
 }
 
-type DBService struct { // DBServiceImp is the implementation of DBService
+type dbs struct { // DBServiceImp is the implementation of DBService
 	db *gorm.DB
 }
 
-func NewDBService(db *gorm.DB) *DBService {
-	return &DBService{db: db}
+func NewDBService(db *gorm.DB) DBS {
+	return &dbs{db: db}
 }

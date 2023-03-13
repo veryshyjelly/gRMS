@@ -3,7 +3,9 @@ package main
 import (
 	"gRMS/database"
 	"gRMS/routes"
-	"gRMS/services"
+	dbService "gRMS/services/db"
+	msgService "gRMS/services/msg"
+	"gRMS/services/server"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,16 +13,17 @@ import (
 )
 
 func main() {
-	// Basic philosophy of this project is to
-	// run server at any place
-	// and then connect to it using the ip address
-	// and the frontend will be hosted somewhere else
-	database.Connect(logger.Info)
-	services.Connect()
+	db := database.Connect(logger.Warn)
 
 	app := fiber.New()
-	routes.Connect(app)
-	routes.RegMedia(app)
+
+	dbs := dbService.NewDBService(db)
+	mgs := msgService.NewMsgService(dbs)
+	dvs := server.NewDvService(mgs, dbs)
+	go dvs.Run()
+
+	routes.Connect(app, dbs, dvs)
+	routes.RegMedia(app, dbs)
 
 	log.Fatalln(app.Listen(":8080"))
 }

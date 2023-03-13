@@ -43,10 +43,6 @@ type Admin struct {
 	ChatID uint64 `json:"chat_id"`
 }
 
-func NewUser() *User {
-	return &User{}
-}
-
 func (u *User) GetUserID() uint64 {
 	return u.ID
 }

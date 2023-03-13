@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"gRMS/modals"
 )
 
@@ -10,7 +9,7 @@ type Channel interface {
 	UserJoin() chan Client
 	UserLeave() chan Client
 	Message() chan *modals.Message
-	Run()
+	Run(dvs DVS)
 }
 
 type channel struct {
@@ -38,12 +37,12 @@ func NewChannel(chatID uint64, user Client) Channel {
 
 // Run is the main function of the channel
 // that listens to the Join, Leave and Mess requests
-func (c *channel) Run() {
-	fmt.Println("channel started", c.ChatID)
+func (c *channel) Run(dvs DVS) {
+	//fmt.Println("channel started", c.ChatID)
 	defer func() {
-		fmt.Println("channel stopped", c.ChatID)
-		DVSr.LockChannels()
-		DVSr.StopChannel() <- c.ChatID
+		//fmt.Println("channel stopped", c.ChatID)
+		dvs.LockChannels()
+		dvs.StopChannel() <- c.ChatID
 	}()
 
 	for len(c.Users) > 0 {

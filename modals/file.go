@@ -10,10 +10,10 @@ type File struct {
 type Filetype byte
 
 const (
-	PhotoType     Filetype = 1
-	VideoType              = 2
-	AudioType              = 3
-	DocumentType           = 4
-	StickerType            = 5
-	AnimationType          = 6
+	PhotoType Filetype = iota
+	VideoType
+	AudioType
+	DocumentType
+	StickerType
+	AnimationType
 )

@@ -1,7 +1,6 @@
 package connect
 
 import (
-	"fmt"
 	"gRMS/modals"
 	dbService "gRMS/services/db"
 	"gRMS/services/server"
@@ -11,12 +10,12 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
-func ConnClient() fiber.Handler {
+func ConnClient(dvs server.DVS, dbs dbService.DBS) fiber.Handler {
 	return websocket.New(func(c *websocket.Conn) {
 		username := c.Query("username")
 		password := c.Query("password")
 
-		user, err := dbService.DBSr.FindUser(username)
+		user, err := dbs.FindUser(username)
 		if err != nil || user.Password != password {
 			err := c.WriteJSON(modals.ErrorUpdate("incorrect username or password"))
 			c.Close()
@@ -26,10 +25,10 @@ func ConnClient() fiber.Handler {
 			return
 		}
 
-		client := server.NewClient(user, c)
-		fmt.Println("new client connected", client.GetUsername())
-		go client.SyncHistory()
+		client := dvs.NewClient(user, c)
+		//fmt.Println("new client connected", client.GetUsername())
+		go client.SyncHistory(dbs)
 		go client.Listen()
-		client.Read()
+		client.Read(dvs)
 	})
 }

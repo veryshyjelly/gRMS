@@ -32,7 +32,7 @@ func GetFileType(tp string) (modals.Filetype, error) {
 }
 
 // CreateMedia is a convenience method to create a media entry
-func (sr *DBService) CreateMedia(filepath, filename string, thumb uint64, filetype modals.Filetype) (Media, error) {
+func (sr *dbs) CreateMedia(filepath, filename string, thumb uint64, filetype modals.Filetype) (Media, error) {
 	switch filetype {
 	case modals.PhotoType:
 		return sr.CreatePhoto(filepath, filename, thumb), nil
@@ -52,7 +52,7 @@ func (sr *DBService) CreateMedia(filepath, filename string, thumb uint64, filety
 }
 
 // GetMedia is a convenience method to get a media entry
-func (sr *DBService) GetMedia(mediaID uint64, filetype modals.Filetype) (Media, error) {
+func (sr *dbs) GetMedia(mediaID uint64, filetype modals.Filetype) (Media, error) {
 	switch filetype {
 	case modals.PhotoType:
 		return sr.GetPhoto(mediaID)

@@ -192,10 +192,7 @@ Project Link: [https://github.com/veryshyjelly/gRMS](https://github.com/veryshyj
 [license-url]: https://github.com/veryshyjelly/gRMS/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/veryshyjelly
-[product-screenshot]: images/screenshot.png
 [Go]: https://img.shields.io/badge/Golang-878787?style=for-the-badge&logo=go&logoColor=white
 [Go-link]: https://golang.google.cn/
 [Go-fiber]: https://img.shields.io/badge/%F0%9F%92%A1%20Go-Fiber-00ACD7.svg?style=flat-square
 [Fiber-url]: https://github.com/gofiber/fiber
-
-
