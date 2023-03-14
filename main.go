@@ -24,7 +24,7 @@ func main() {
 
 	db := database.Connect(logger.Warn)
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{BodyLimit: 21474836480})
 
 	dbs := dbService.NewDBService(db)
 	mgs := msgService.NewMsgService(dbs)

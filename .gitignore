@@ -16,3 +16,8 @@
 
 .idea/
 /database/chatdata.db
+/database/animation/
+/database/document/
+/database/photo/
+/database/sticker/
+/database/video/
