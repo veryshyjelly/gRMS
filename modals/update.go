@@ -7,8 +7,6 @@ type Update struct {
 	Message *Message `json:"message"`
 	// EditedMessage new version of message that was already sent
 	EditedMessage *Message `json:"edited_message"`
-	// NewChatCreated a new chat has been created
-	NewChatCreated *Chat `json:"new_chat_created"`
 	// User is the user data requested
 	User *User `json:"user"`
 	// Self is the user data of the client
@@ -28,7 +26,7 @@ func ErrorUpdate(err string) *Update {
 }
 
 func NewChatUpdate(chat *Chat) *Update {
-	return &Update{NewChatCreated: chat}
+	return &Update{Chat: chat, Message: &Message{NewChatCreated: true}}
 }
 
 func ChatUpdate(chat *Chat) *Update {

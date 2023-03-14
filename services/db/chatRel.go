@@ -16,7 +16,7 @@ func (sr *dbs) AddMember(chatID uint64, userID uint64) (*modals.Participant, err
 	return &chatRel, nil
 }
 
-// AddAdmin creates a admin relation of the user with the chat
+// AddAdmin creates an admin relation of the user with the chat
 func (sr *dbs) AddAdmin(chatId uint64, userID uint64) (*modals.Admin, error) {
 	chatRel := modals.Admin{
 		ChatID: chatId,

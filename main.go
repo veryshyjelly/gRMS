@@ -7,12 +7,21 @@ import (
 	msgService "gRMS/services/msg"
 	"gRMS/services/server"
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"gorm.io/gorm/logger"
 )
 
 func main() {
+	godotenv.Load(".env")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	db := database.Connect(logger.Warn)
 
 	app := fiber.New()
@@ -25,5 +34,5 @@ func main() {
 	routes.Connect(app, dbs, dvs)
 	routes.RegMedia(app, dbs)
 
-	log.Fatalln(app.Listen(":8080"))
+	log.Fatalln(app.Listen(":" + port))
 }

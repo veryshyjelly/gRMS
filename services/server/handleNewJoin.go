@@ -31,6 +31,7 @@ func (sr *dvs) HandleAddToChat(c Client, query *UserQuery) {
 			if _, err = sr.addMember(chat.ID, u.ID); err != nil {
 				c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error adding user to chat: %v", err))
 			} else {
+				sr.SendMess(&modals.Message{NewChatMember: u.ID, Chat: chat.ID})
 				if p, ok := sr.ActiveUsers()[u.ID]; ok {
 					p.ChatJoin() <- chat.ID
 					if channel, ok := sr.ActiveChannels()[chat.ID]; ok {

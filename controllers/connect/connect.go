@@ -26,7 +26,6 @@ func ConnClient(dvs server.DVS, dbs dbService.DBS) fiber.Handler {
 		}
 
 		client := dvs.NewClient(user, c)
-		//fmt.Println("new client connected", client.GetUsername())
 		go client.SyncHistory(dbs)
 		go client.Listen()
 		client.Read(dvs)
