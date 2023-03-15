@@ -21,7 +21,7 @@ func (sr *dvs) HandleNewChat(chatQuery *NewChatQuery, c Client) {
 	}
 	// Loop through the participants find their userID and add them to users list
 	for _, username := range chatQuery.Participants {
-		user, err := sr.findUser(username)
+		user, err := sr.Dbs.FindUser(username)
 		if err != nil {
 			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error finding user: %v", err))
 			return
@@ -29,7 +29,7 @@ func (sr *dvs) HandleNewChat(chatQuery *NewChatQuery, c Client) {
 		users = append(users, user.ID)
 	}
 
-	chat, err := sr.createChat(users, chatQuery.Title)
+	chat, err := sr.Dbs.CreateChat(users, chatQuery.Title)
 	if err != nil {
 		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error creating chat: %v", err))
 		return

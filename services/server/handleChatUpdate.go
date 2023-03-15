@@ -14,7 +14,7 @@ type ChatQuery struct {
 // HandleNewTitle handles the query to change the chat title
 func (sr *dvs) HandleNewTitle(c Client, query *ChatQuery) {
 	// first check if the chat exists
-	chat, err := sr.getChat(query.ChatId)
+	chat, err := sr.Dbs.GetChat(query.ChatId)
 	if err != nil {
 		c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("chat not found"))
 		return
