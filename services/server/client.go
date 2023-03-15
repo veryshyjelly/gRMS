@@ -12,6 +12,7 @@ type Client interface {
 	GetUserID() uint64
 	GetUsername() string
 	ChatJoin() chan uint64
+	LeaveChat() chan uint64
 	Updates() chan *modals.Update
 	SyncHistory(dbs dbservice.DBS)
 	Read(dvs DVS)
@@ -24,7 +25,8 @@ type client struct {
 	Chats      map[uint64]bool
 	updates    chan *modals.Update
 	history    chan *modals.Update
-	Join       chan uint64
+	join       chan uint64
+	leave      chan uint64
 	Connection *websocket.Conn
 }
 
@@ -35,7 +37,8 @@ func (sr *dvs) NewClient(user *modals.User, connection *websocket.Conn) Client {
 		Connection: connection,
 		updates:    make(chan *modals.Update),
 		history:    make(chan *modals.Update),
-		Join:       make(chan uint64),
+		join:       make(chan uint64),
+		leave:      make(chan uint64),
 		Chats:      user.GetChats(),
 	}
 
@@ -76,7 +79,11 @@ func (c *client) GetUsername() string {
 }
 
 func (c *client) ChatJoin() chan uint64 {
-	return c.Join
+	return c.join
+}
+
+func (c *client) LeaveChat() chan uint64 {
+	return c.leave
 }
 
 func (c *client) Updates() chan *modals.Update {

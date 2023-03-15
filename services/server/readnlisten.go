@@ -45,7 +45,7 @@ func (c *client) Listen() {
 			if err := c.Connection.WriteJSON(his); err != nil {
 				log.Println("error while writing message to client", err)
 			}
-		case chatID := <-c.Join:
+		case chatID := <-c.join:
 			c.Chats[chatID] = true
 		}
 	}

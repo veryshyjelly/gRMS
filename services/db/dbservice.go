@@ -19,6 +19,8 @@ type DBS interface { // DBService is the interface for all the database services
 	DeleteChatPhoto(chatID uint64) (*modals.Chat, error)
 	AddMember(chatID uint64, userID uint64) (*modals.Participant, error)
 	AddAdmin(chatId uint64, userID uint64) (*modals.Admin, error)
+	RemoveMember(chatId uint64, userID uint64) error
+	RemoveAdmin(chatId uint64, userID uint64) error
 	CreatePhoto(filepath, filename string, thumb uint64) Media
 	GetPhoto(photoID uint64) (Media, error)
 	CreateVideo(filepath, filename string, thumb uint64) Media

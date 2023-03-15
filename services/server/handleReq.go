@@ -38,6 +38,12 @@ func (sr *dvs) HandleReq(c Client, p []byte) {
 		sr.HandleNewChat(req.NewChat, c)
 	case req.ChatJoin != nil:
 		sr.HandleAddToChat(c, req.ChatJoin)
+	case req.ChatKick != nil:
+		sr.HandleRemoveFromChat(c, req.ChatKick)
+	case req.Promote != nil:
+		sr.HandlePromoteUsers(c, req.Promote)
+	case req.Demote != nil:
+		sr.HandleDemoteUsers(c, req.Demote)
 	case req.GetUser != 0:
 		user, err := sr.Dbs.GetUser(req.GetUser)
 		if err != nil {
@@ -59,5 +65,7 @@ func (sr *dvs) HandleReq(c Client, p []byte) {
 		} else {
 			c.Updates() <- &modals.Update{Self: user}
 		}
+	case req.ChangeTitle != nil:
+		sr.HandleNewTitle(c, req.ChangeTitle)
 	}
 }
