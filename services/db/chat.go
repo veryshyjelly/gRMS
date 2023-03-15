@@ -55,8 +55,10 @@ func (sr *dbs) GetChat(chatID uint64) (*modals.Chat, error) {
 
 // UpdateChat updates the chat
 func (sr *dbs) UpdateChat(chat *modals.Chat) error {
-	// TODO: check if chat exists
-	return nil
+	if chat.ID == 0 { // check whether the chat has proper id
+		return fmt.Errorf("invalid chat id")
+	}
+	return sr.db.Save(chat).Error // update the chat and return the error
 }
 
 // SetChatPhoto sets the chat photo

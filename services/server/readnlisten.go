@@ -6,14 +6,16 @@ import (
 
 func (c *client) Read(dvs DVS) {
 	defer func() {
+		// things to do when this function ends
 		for chatID := range c.GetChats() {
+			// first of all notify the chats about the user
 			if channel, ok := dvs.ActiveChannels()[chatID]; ok {
 				channel.UserLeave() <- c
 			}
 		}
 
 		dvs.LockUsers()
-		dvs.LeaveUser() <- c.GetUserID()
+		dvs.LeaveUser() <- c.GetUserID() // now remove the user from active users map
 		if err := c.Connection.Close(); err != nil {
 			log.Println("error while closing connection", err)
 		}

@@ -7,16 +7,17 @@ import (
 )
 
 type Req struct {
-	Message   *MessQuery    `json:"message"`
-	NewChat   *NewChatQuery `json:"new_chat"`
-	ChatJoin  *UserQuery    `json:"add_user"`
-	ChatKick  *UserQuery    `json:"kick_user"`
-	Promote   *UserQuery    `json:"promote"`
-	Demote    *UserQuery    `json:"demote"`
-	GetUser   uint64        `json:"get_user"`
-	GetChat   uint64        `json:"get_chat"`
-	GetSelf   uint64        `json:"get_self"`
-	LeaveChat uint64        `json:"leave_chat"`
+	Message     *MessQuery    `json:"message"`
+	NewChat     *NewChatQuery `json:"new_chat"`
+	ChatJoin    *UserQuery    `json:"add_user"`
+	ChatKick    *UserQuery    `json:"kick_user"`
+	Promote     *UserQuery    `json:"promote"`
+	Demote      *UserQuery    `json:"demote"`
+	ChangeTitle *ChatQuery    `json:"change_title"`
+	GetUser     uint64        `json:"get_user"`
+	GetChat     uint64        `json:"get_chat"`
+	GetSelf     uint64        `json:"get_self"`
+	LeaveChat   uint64        `json:"leave_chat"`
 	//Forward *msgService.ForwardQuery  `json:"forward"`
 }
 

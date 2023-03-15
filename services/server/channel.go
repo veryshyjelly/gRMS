@@ -38,25 +38,20 @@ func NewChannel(chatID uint64, user Client) Channel {
 // Run is the main function of the channel
 // that listens to the Join, Leave and Mess requests
 func (c *channel) Run(dvs DVS) {
-	//fmt.Println("channel started", c.ChatID)
 	defer func() {
-		//fmt.Println("channel stopped", c.ChatID)
 		dvs.LockChannels()
 		dvs.StopChannel() <- c.ChatID
 	}()
-
+	// run this function while any user of the chat is active
 	for len(c.Users) > 0 {
 		select {
-		case client := <-c.Join:
-			// fmt.Printf("new user %v joined in %v\n", client.GetUsername(), c.ChatID)
+		case client := <-c.Join: // a new user is online
 			c.Users[client] = true
 
-		case client := <-c.Leave:
-			// fmt.Println("user left", client.GetUsername())
+		case client := <-c.Leave: // user becomes offline
 			delete(c.Users, client)
 
-		case msg := <-c.Mess:
-			//fmt.Println("new message", msg)
+		case msg := <-c.Mess: // new message incoming
 			for client := range c.Users {
 				client.Updates() <- modals.MessageUpdate(msg)
 			}
