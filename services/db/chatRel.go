@@ -35,7 +35,7 @@ func (sr *dbs) RemoveMember(chatId, userId uint64) error {
 		UserID: userId,
 	}
 
-	return sr.db.Delete(&chatRel).Error
+	return sr.db.Where(&chatRel).Delete(&chatRel).Error
 }
 
 // RemoveAdmin deletes the relation of user as admin
@@ -45,5 +45,5 @@ func (sr *dbs) RemoveAdmin(chatId, userID uint64) error {
 		UserID: userID,
 	}
 
-	return sr.db.Delete(&chatRel).Error
+	return sr.db.Where(&chatRel).Delete(&chatRel).Error
 }

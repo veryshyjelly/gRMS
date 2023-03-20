@@ -67,5 +67,12 @@ func (sr *dvs) HandleReq(c Client, p []byte) {
 		}
 	case req.ChangeTitle != nil:
 		sr.HandleNewTitle(c, req.ChangeTitle)
+	case req.LeaveChat != 0:
+		sr.ActiveChannels()[req.LeaveChat].UserLeave() <- c
+		c.LeaveChat() <- req.LeaveChat
+		err = sr.Dbs.RemoveMember(req.LeaveChat, c.GetUserID())
+		if err != nil {
+			c.Updates() <- modals.ErrorUpdate(fmt.Sprintf("error occurred while leaving chat"))
+		}
 	}
 }

@@ -22,7 +22,7 @@ func main() {
 		port = "8080"
 	}
 
-	db := database.Connect(logger.Warn)
+	db := database.Connect(logger.Info)
 
 	app := fiber.New(fiber.Config{BodyLimit: 21474836480})
 
